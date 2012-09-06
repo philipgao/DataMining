@@ -11,7 +11,7 @@ import org.junit.Test;
  * @author Gao, Fei
  *
  */
-public class AprioriAlgorithmtest {
+public class AprioriAlgorithmTest {
 
 	@Test
 	public void test() {
