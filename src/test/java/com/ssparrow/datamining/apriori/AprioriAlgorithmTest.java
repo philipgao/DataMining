@@ -102,5 +102,91 @@ public class AprioriAlgorithmTest {
 		assertEquals("4", itemIterator.next());
 		assertEquals(Integer.valueOf(3), patterns.get(itemSet));
 	}
+	
+	/**
+	 * another example with the following data set
+	 * A B
+	 * A C E
+	 * B C
+	 * A C D
+	 * A B C
+	 * A B D
+	 * B C D E
+	 */
+	@Test
+	public void testFindPatterns2(){
+		List<List<String>> transactions = new ArrayList<List<String>>();
+		
+		//A B
+		List<String> transaction=new ArrayList<String>();
+		transaction.add("A");
+		transaction.add("B");
+		transactions.add(transaction);
+		
+		//A C E
+		transaction=new ArrayList<String>();
+		transaction.add("A");
+		transaction.add("C");
+		transaction.add("E");
+		transactions.add(transaction);
+		
+		//B C
+		transaction=new ArrayList<String>();
+		transaction.add("B");
+		transaction.add("C");
+		transactions.add(transaction);
+		
+		//A C D
+		transaction=new ArrayList<String>();
+		transaction.add("A");
+		transaction.add("C");
+		transaction.add("D");
+		transactions.add(transaction);
+
+		//A B C
+		transaction=new ArrayList<String>();
+		transaction.add("A");
+		transaction.add("B");
+		transaction.add("C");
+		transactions.add(transaction);
+
+		//A B D
+		transaction=new ArrayList<String>();
+		transaction.add("A");
+		transaction.add("B");
+		transaction.add("D");
+		transactions.add(transaction);
+
+		//B C D E
+		transaction=new ArrayList<String>();
+		transaction.add("B");
+		transaction.add("C");
+		transaction.add("D");
+		transaction.add("E");
+		transactions.add(transaction);
+		
+		Map<Set<String>, Integer> patterns = AprioriAlgorithm.findPatterns(transactions, 3);
+		assertEquals(3, patterns.size());
+		
+		Iterator<Set<String>> iterator = patterns.keySet().iterator();
+		
+		Set<String> itemSet = iterator.next();
+		Iterator<String> itemIterator = itemSet.iterator();
+		assertEquals("A", itemIterator.next());
+		assertEquals("B", itemIterator.next());
+		assertEquals(Integer.valueOf(3), patterns.get(itemSet));
+		
+		itemSet = iterator.next();
+		itemIterator = itemSet.iterator();
+		assertEquals("A", itemIterator.next());
+		assertEquals("C", itemIterator.next());
+		assertEquals(Integer.valueOf(3), patterns.get(itemSet));
+		
+		itemSet = iterator.next();
+		itemIterator = itemSet.iterator();
+		assertEquals("B", itemIterator.next());
+		assertEquals("C", itemIterator.next());
+		assertEquals(Integer.valueOf(3), patterns.get(itemSet));
+	}
 
 }
