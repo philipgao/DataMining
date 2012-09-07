@@ -73,7 +73,9 @@ public class AprioriAlgorithmTest {
 		transaction.add("4");
 		transactions.add(transaction);
 		
-		Map<Set<String>, Integer> patterns = AprioriAlgorithm.findFrequentItemSets(transactions, 3, 2);
+		AprioriAlgorithm aprioriAlgorithm = new AprioriAlgorithm();
+		aprioriAlgorithm.findFrequentItemSets(transactions, 3);;
+		Map<Set<String>, Integer> patterns = aprioriAlgorithm.getFrequentItemSets(2);
 		assertEquals(4, patterns.size());
 		
 		Iterator<Set<String>> iterator = patterns.keySet().iterator();
@@ -165,7 +167,9 @@ public class AprioriAlgorithmTest {
 		transaction.add("E");
 		transactions.add(transaction);
 		
-		Map<Set<String>, Integer> patterns = AprioriAlgorithm.findFrequentItemSets(transactions, 3, 1);
+		AprioriAlgorithm aprioriAlgorithm = new AprioriAlgorithm();
+		aprioriAlgorithm.findFrequentItemSets(transactions, 3);;
+		Map<Set<String>, Integer> patterns = aprioriAlgorithm.getFrequentItemSets(1);
 		assertEquals(7, patterns.size());
 		
 		Iterator<Set<String>> iterator = patterns.keySet().iterator();
@@ -207,6 +211,12 @@ public class AprioriAlgorithmTest {
 		assertEquals("B", itemIterator.next());
 		assertEquals("C", itemIterator.next());
 		assertEquals(Integer.valueOf(3), patterns.get(itemSet));
+		
+		Map<Set<String>, Integer> maximalFrequentItemSet = aprioriAlgorithm.getMaximalFrequentItemSet();
+		assertEquals("{[D]=3, [A, B]=3, [A, C]=3, [B, C]=3}", maximalFrequentItemSet.toString());
+		
+		Map<Set<String>, Integer> closedFrequentItemSet = aprioriAlgorithm.getClosedFrequentItemSet();
+		assertEquals(7, closedFrequentItemSet.size());
 	}
 
 }

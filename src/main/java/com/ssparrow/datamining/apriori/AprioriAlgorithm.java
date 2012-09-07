@@ -4,6 +4,7 @@
 package com.ssparrow.datamining.apriori;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,8 @@ import java.util.TreeSet;
  * @author Gao, Fei
  *
  */
-public class AprioriAlgorithm {
-	
+public class AprioriAlgorithm extends AbstractAssociationMiningAlgorithm{
+
 	/**
 	 * implementation according to pseudo code of apriori algorithm on wikipedia
 	 * it will only return items sets with or more than 2 items
@@ -27,11 +28,7 @@ public class AprioriAlgorithm {
 	 * @param minSize
 	 * @return
 	 */
-	public static Map<Set<String>, Integer> findFrequentItemSets(List<List<String>> transactions, int threshold, int minSize){
-		int size=1;
-		
-		Map<Set<String>, Integer> frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
-		
+	public void findFrequentItemSets(List<List<String>> transactions, int threshold){
 		//count the occurrence of all single items
 		Map<Set<String>, Integer> countMap=new LinkedHashMap<Set<String>, Integer>();
 		for(List<String> transaction:transactions){
@@ -54,15 +51,11 @@ public class AprioriAlgorithm {
 				candidates.put(itemSet,count);
 				singleCandidates.addAll(itemSet);
 				
-				if(size>=minSize){
-					frequentItemSets.put(itemSet, count);
-				}
+				frequentItemSets.put(itemSet, count);
 			}
 		}
 		
 		while(!candidates.isEmpty()){
-			size++;
-			
 			//generate the next level item sets by adding possible single item to current level set
 			List<Set<String>> nextLevelItemSets=new ArrayList<Set<String>>();
 			for(Set<String> itemSet:candidates.keySet()){
@@ -97,15 +90,11 @@ public class AprioriAlgorithm {
 				if(count>=threshold){
 					candidates.put(itemSet,count);
 					
-					if(size>=minSize){
-						frequentItemSets.put(itemSet,count);
-					}
+					frequentItemSets.put(itemSet,count);
 				}
 			}
 		}
 		
-		return frequentItemSets;
+		return;
 	}
-	
-	
 }
