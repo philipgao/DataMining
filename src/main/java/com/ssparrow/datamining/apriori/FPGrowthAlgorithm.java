@@ -23,6 +23,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 	public void findFrequentItemSets(List<List<String>> transactions,int threshold) {
 		List<String> singleCandidates=new ArrayList<String>();
 		
+		//count the occurrence of each single item
 		Map<String, Integer> singleItemCountMap=new HashMap<String, Integer>();
 		for(List<String> transaction:transactions){
 			for(String item:transaction){
@@ -31,6 +32,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 			}
 		}
 		
+		//create reverse map of Count-FrequentItems
 		Map<Integer, List<String>> reverseCountMap=new HashMap<Integer, List<String>>();
 		for(String item:singleItemCountMap.keySet()){
 			int count=singleItemCountMap.get(item);
@@ -45,15 +47,18 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 			}
 		}
 		
+		//create the frequent single item list, with order of descending count
 		List<Integer> countList=new ArrayList<Integer>(reverseCountMap.keySet());
 		Collections.sort(countList);
 		for(Integer count:countList){
 			singleCandidates.addAll(reverseCountMap.get(count));
 		}
 		
+		//create FP Tree
 		FPTree fpTree=new FPTree(singleCandidates);
 		
 		for(List<String> transaction:transactions){
+			//extract frequent single items from transaction
 			Map<Integer, String> frequentItemsMap=new TreeMap<Integer, String>();
 			for(String item:transaction){
 				if(singleCandidates.contains(item)){
@@ -61,6 +66,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 				}
 			}
 			
+			//create frequent single item list of current transaction, use it to grow FP Tree
 			List<String> itemList = new ArrayList<String>(frequentItemsMap.values());
 			fpTree.addToTree(itemList);
 		}

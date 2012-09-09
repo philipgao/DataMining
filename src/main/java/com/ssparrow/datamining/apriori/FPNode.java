@@ -18,6 +18,7 @@ public class FPNode {
 	
 	private List<FPNode> children = new ArrayList<FPNode>();
 	private Map<String, FPNode> childrenMap=new LinkedHashMap<String, FPNode>();
+	private List<FPNode> path =  new ArrayList<FPNode>();
 	
 	/**
 	 * @param item
@@ -61,6 +62,10 @@ public class FPNode {
 	public void addChild(FPNode child){
 		children.add(child);
 		childrenMap.put(child.getItem(), child);
+		
+		List<FPNode> childPath=new ArrayList<FPNode>();
+		childPath.add(child);
+		child.setPath(childPath);
 	}
 	
 	/**
@@ -79,5 +84,21 @@ public class FPNode {
 	public FPNode getChild(String item){
 		return childrenMap.get(item);
 	}
+
+	/**
+	 * @return the path
+	 */
+	public List<FPNode> getPath() {
+		return path;
+	}
+
+	/**
+	 * @param path the path to set
+	 */
+	public void setPath(List<FPNode> path) {
+		this.path = path;
+	}
+	
+	
 	
 }

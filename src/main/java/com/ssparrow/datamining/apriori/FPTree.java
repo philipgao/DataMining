@@ -39,12 +39,11 @@ public class FPTree {
 	 * @param itemList
 	 */
 	public void addToTree(List<String> itemList){
-		FPNode child = root.getChild(itemList.get(0));
-		
+		int index=0;
+		FPNode child = root.getChild(itemList.get(index));
+
+		FPNode node=child;
 		if(child!=null){
-			int index=0;
-			FPNode node=child;
-			
 			while(child!=null){
 				child.increaseCount(1);
 				
@@ -58,18 +57,19 @@ public class FPTree {
 				}
 			}
 			
-			while(index<itemList.size()){
-				FPNode newChild = node.addChild(itemList.get(index));
-				node=newChild;
-			}
-			
 		}else{
-			FPNode node = root.addChild(itemList.get(0));
+			node = root.addChild(itemList.get(index));
 			
-			for(int index=1;index<itemList.size();index++){
-				FPNode newChild = node.addChild(itemList.get(index));
-				node=newChild;
-			}
+			index++;
+		}
+
+		while(index<itemList.size()){
+			String item = itemList.get(index);
+			FPNode newChild = node.addChild(item);
+			headerTable.get(item).add(newChild);
+			
+			node=newChild;
+			index++;
 		}
 	}
 }
