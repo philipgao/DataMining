@@ -5,10 +5,15 @@ package com.ssparrow.datamining.apriori;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+
+import sun.misc.FpUtils;
 
 /**
  * @author Gao, Fei
@@ -24,7 +29,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 		List<String> singleCandidates=new ArrayList<String>();
 		
 		//count the occurrence of each single item
-		Map<String, Integer> singleItemCountMap=new HashMap<String, Integer>();
+		Map<String, Integer> singleItemCountMap=new TreeMap<String, Integer>();
 		for(List<String> transaction:transactions){
 			for(String item:transaction){
 				int count = singleItemCountMap.get(item)==null?1:singleItemCountMap.get(item)+1;
@@ -32,8 +37,16 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 			}
 		}
 		
-		//create reverse map of Count-FrequentItems
-		Map<Integer, List<String>> reverseCountMap=new HashMap<Integer, List<String>>();
+		//create reverse map of Count-FrequentItems, key ordered by descending count
+		Map<Integer, List<String>> reverseCountMap=new TreeMap<Integer, List<String>>(new Comparator<Integer>() {
+
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				return o2.intValue()-o1.intValue();
+			}
+		});
+		
+		//fill the reverse count map with frequent item sets
 		for(String item:singleItemCountMap.keySet()){
 			int count=singleItemCountMap.get(item);
 			
@@ -49,7 +62,6 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 		
 		//create the frequent single item list, with order of descending count
 		List<Integer> countList=new ArrayList<Integer>(reverseCountMap.keySet());
-		Collections.sort(countList);
 		for(Integer count:countList){
 			singleCandidates.addAll(reverseCountMap.get(count));
 		}
@@ -71,7 +83,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 			fpTree.addToTree(itemList);
 		}
 		
-
+		frequentItemSets=FPTreeUtil.getFrequentItemSet(singleCandidates, singleItemCountMap, fpTree, threshold);
 	}
 
 }

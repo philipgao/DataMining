@@ -49,6 +49,14 @@ public class FPNode {
 		this.count = this.count+amount;
 	}
 
+	
+	/**
+	 * @return
+	 */
+	public int getCount() {
+		return count;
+	}
+
 	/**
 	 * @return the children
 	 */
@@ -63,7 +71,7 @@ public class FPNode {
 		children.add(child);
 		childrenMap.put(child.getItem(), child);
 		
-		List<FPNode> childPath=new ArrayList<FPNode>();
+		List<FPNode> childPath=new ArrayList<FPNode>(this.path);
 		childPath.add(child);
 		child.setPath(childPath);
 	}
@@ -98,6 +106,20 @@ public class FPNode {
 	public void setPath(List<FPNode> path) {
 		this.path = path;
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		FPNode clone=new FPNode(this.getItem());
+		clone.setCount(this.getCount());
+		return clone;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + item + ":" + count + "]";
+	}
+	
+	
 	
 	
 	

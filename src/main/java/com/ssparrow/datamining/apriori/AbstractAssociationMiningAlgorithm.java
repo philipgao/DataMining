@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public abstract class AbstractAssociationMiningAlgorithm {
 
-	protected Map<Set<String>, Integer> frequentItemSets = new LinkedHashMap<Set<String>, Integer>();;
+	protected Map<Set<String>, Integer> frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
 	
 	/**
 	 * @param transactions
