@@ -74,7 +74,7 @@ List<List<String>> transactions = new ArrayList<List<String>>();
 		Map<Set<String>, Integer> patterns = fpGrowthAlgorithm.getFrequentItemSets(2);
 		assertEquals(12, patterns.size());
 		
-		assertEquals("{[p, c]=3, [m, c]=3, [m, f]=3, [m, c, f]=3, [m, a]=3, [m, c, a]=3, [m, f, a]=3, [m, c, f, a]=3, [a, c]=3, [a, f]=3, [a, c, f]=3, [f, c]=3}",
+		assertEquals("{[c, p]=3, [a, m]=3, [f, m]=3, [a, f, m]=3, [c, m]=3, [a, c, m]=3, [c, f, m]=3, [a, c, f, m]=3, [a, f]=3, [a, c]=3, [a, c, f]=3, [c, f]=3}",
 						patterns.toString());
 		
 	}

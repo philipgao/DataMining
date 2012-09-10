@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 			fpTree.addToTree(itemList);
 		}
 		
-		frequentItemSets=FPTreeUtil.getFrequentItemSet(singleCandidates, singleItemCountMap, fpTree, threshold);
+		FPTreeUtil.getFrequentItemSet(singleCandidates, singleItemCountMap, fpTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
 	}
 
 }

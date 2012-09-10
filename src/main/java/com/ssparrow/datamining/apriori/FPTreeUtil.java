@@ -5,17 +5,92 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class FPTreeUtil {
+
 	
 	/**
 	 * @param singleCandidates
 	 * @param singleItemCountMap
 	 * @param fpTree
 	 * @param threshold
+	 * @param baseItemSets
 	 * @return
 	 */
-	public static Map<Set<String>, Integer> getFrequentItemSet(List<String> singleCandidates, Map<String, Integer> singleItemCountMap, FPTree fpTree, int threshold){
+	public static void getFrequentItemSet(List<String> singleCandidates, Map<String, Integer> singleItemCountMap, FPTree fpTree, int threshold,Map<Set<String>, Integer> frequentItemSets, Map<Set<String>, Integer> baseItemSets){
+		if(fpTree.isEmpty()){
+			return;
+		}
+		
+		for(int index=singleCandidates.size()-1;index>=0;index--){
+			Map<Set<String>, Integer> newBaseItemSets = new LinkedHashMap<Set<String>, Integer>();
+			newBaseItemSets.putAll(baseItemSets);
+			
+			String item=singleCandidates.get(index);
+			int count=fpTree.getItemCount(item);
+			
+			if(count>=threshold){
+				if(baseItemSets.size()==0){
+					Set<String> singleItemSet=new TreeSet<String>();
+					singleItemSet.add(item);
+					
+					newBaseItemSets.put(singleItemSet, count);
+					frequentItemSets.put(singleItemSet, count);
+				}else{
+					for(Set<String> baseItemSet:baseItemSets.keySet()){
+						Set<String> newItemSet=new TreeSet<String>(baseItemSet);
+						newItemSet.add(item);
+						
+						newBaseItemSets.put(newItemSet, count);
+						frequentItemSets.put(newItemSet, count);
+					}
+				}
+			}
+			
+			List<List<FPNode>> conditionalPatternBase = fpTree.getConditionalPatternBase(item);
+			FPTree newFpTreee = createFpTreeFromConditionalPatternBase(singleCandidates, conditionalPatternBase, threshold);
+			
+			getFrequentItemSet(singleCandidates, singleItemCountMap, newFpTreee, threshold, frequentItemSets, newBaseItemSets);
+		}
+		
+		return;
+	}
+	
+	/**
+	 * 
+	 * @param singleCandidates
+	 * @param conditionalPatternBase
+	 * @param threshold
+	 * @return
+	 */
+	public static FPTree createFpTreeFromConditionalPatternBase(List<String> singleCandidates, List<List<FPNode>> conditionalPatternBase, int threshold){
+		FPTree fpTree=new FPTree(singleCandidates);
+		
+		//create fp tree from the conditional pattern base
+		for(List<FPNode> path:conditionalPatternBase){
+			if(path.size()>0){
+				fpTree.addClonedNodesToTree(path);
+			}
+		}
+		
+		fpTree.filterTree(threshold);
+		
+		return fpTree;
+	}
+	
+	/**
+	 * Deprecated because it may have bug when the FP tree have multiple distinct paths
+	 * 
+	 * @param singleCandidates
+	 * @param singleItemCountMap
+	 * @param fpTree
+	 * @param threshold
+	 * @return
+	 * 
+	 * @deprecated
+	 */
+	public static Map<Set<String>, Integer> getFrequentItemSetByMergingPaths(List<String> singleCandidates, Map<String, Integer> singleItemCountMap, FPTree fpTree, int threshold){
 		Map<Set<String>, Integer> frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
 
 		for(int index=singleCandidates.size()-1;index>=0;index--){
@@ -28,7 +103,7 @@ public class FPTreeUtil {
 			currentFrequentItemSets.put(singleItemSet, count);
 			
 			List<List<FPNode>> conditionalPatternBase = fpTree.getConditionalPatternBase(item);
-			FPTree fpTreeFromCPB = FPTreeUtil.createFpTreeFromConditionalPatternBase(singleCandidates, conditionalPatternBase, threshold);
+			FPTree fpTreeFromCPB = FPTreeUtil.createFpTreeFromConditionalPatternBaseByMergingPaths(singleCandidates, conditionalPatternBase, threshold);
 			
 			FPNode node = fpTreeFromCPB.getRoot();
 			FPNode child = node.getChildren().size()>0?node.getChildren().get(0):null;
@@ -58,12 +133,16 @@ public class FPTreeUtil {
 	}
 	
 	/**
+	 * Deprecated because it may have bug when the FP tree have multiple distinct paths
+	 * 
 	 * @param singleCandidates
 	 * @param conditionalPatternBase
 	 * @param threshold
 	 * @return
+	 * 
+	 * @deprecated
 	 */
-	public static FPTree createFpTreeFromConditionalPatternBase(List<String> singleCandidates, List<List<FPNode>> conditionalPatternBase, int threshold){
+	public static FPTree createFpTreeFromConditionalPatternBaseByMergingPaths(List<String> singleCandidates, List<List<FPNode>> conditionalPatternBase, int threshold){
 		FPTree fpTree=new FPTree(singleCandidates);
 		
 		FPNode node=fpTree.getRoot();
@@ -93,7 +172,7 @@ public class FPTreeUtil {
 			
 			//if the count match threshold, create node for the merged count and add the node to the tree
 			if(count>=threshold){
-				FPNode child=new FPNode(item);
+				FPNode child=new FPNode(fpTree, item);
 				child.setCount(count);
 				
 				node.addChild(child);

@@ -13,6 +13,7 @@ import java.util.Map;
  *
  */
 public class FPNode {
+	private FPTree fpTree;
 	private String item;
 	private int count = 0;
 	
@@ -23,8 +24,8 @@ public class FPNode {
 	/**
 	 * @param item
 	 */
-	public FPNode(String item) {
-		super();
+	public FPNode(FPTree fpTree, String item) {
+		this.fpTree=fpTree;
 		this.item = item;
 	}
 	
@@ -80,9 +81,41 @@ public class FPNode {
 	 * @param Item
 	 */
 	public FPNode addChild(String Item){
-		FPNode child=new FPNode(Item);
+		FPNode child=new FPNode(this.fpTree, Item);
 		this.addChild(child);
 		return child;
+	}
+	
+	/**
+	 * @param child
+	 */
+	public void removeChild(FPNode child){
+		children.remove(child);
+		childrenMap.remove(child.getItem());
+	}
+	
+	/**
+	 * add list of FP Nodes as children of current node, merge with exisiting child if they are about the same item
+	 * 
+	 * @param addedChildren
+	 */
+	public void addAndMergeChildren(List<FPNode> addedChildren){
+		for(FPNode newChild:addedChildren){
+			String childItem = newChild.getItem();
+			FPNode existingChild = this.getChild(childItem);
+			if(existingChild!=null){
+				existingChild.increaseCount(newChild.getCount());
+				
+				for(FPNode nextLevelNode:newChild.getChildren()){
+					nextLevelNode.replaceInPath(newChild, existingChild);
+				}
+
+				existingChild.addAndMergeChildren(newChild.getChildren());
+				
+				newChild.getFpTree().removeFromHeaderTable(newChild);
+				
+			}
+		}
 	}
 	
 	/**
@@ -106,12 +139,36 @@ public class FPNode {
 	public void setPath(List<FPNode> path) {
 		this.path = path;
 	}
+	
+	/**
+	 * @param node
+	 */
+	public void removeFromPath(FPNode node){
+		path.remove(node);
+	}
+	
+	/**
+	 * @param srcNode
+	 * @param tgtNode
+	 */
+	public void replaceInPath(FPNode srcNode, FPNode tgtNode){
+		int index = path.indexOf(srcNode);
+		
+		if(index>=0){
+			path.remove(srcNode);
+			path.add(index, tgtNode);
+		}
+	}
 
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		FPNode clone=new FPNode(this.getItem());
+		FPNode clone=new FPNode(this.fpTree, this.getItem());
 		clone.setCount(this.getCount());
 		return clone;
+	}
+
+	public FPTree getFpTree() {
+		return fpTree;
 	}
 
 	@Override

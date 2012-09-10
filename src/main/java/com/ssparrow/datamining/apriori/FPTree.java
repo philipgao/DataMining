@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * @author Gao, Fei
@@ -15,7 +16,7 @@ import java.util.Map;
  */
 public class FPTree {
 	private List<String> singleCandidates;
-	private FPNode root=new FPNode("");
+	private FPNode root=new FPNode(this, "");
 	private Map<String, List<FPNode>> headerTable=new LinkedHashMap<String, List<FPNode>>();
 	
 	/**
@@ -34,6 +35,13 @@ public class FPTree {
 	 */
 	public FPNode getRoot() {
 		return root;
+	}
+	
+	/**
+	 * @return
+	 */
+	public boolean isEmpty(){
+		return root.getChildren().size()==0;
 	}
 	
 	/**
@@ -62,6 +70,9 @@ public class FPTree {
 			
 		}else{
 			node = root.addChild(itemList.get(index));
+			node.increaseCount(1);
+			
+			headerTable.get(itemList.get(index)).add(node);
 			
 			index++;
 		}
@@ -79,9 +90,67 @@ public class FPTree {
 		}
 	}
 	
+	/**
+	 * @param itemList
+	 */
+	public void addClonedNodesToTree(List<FPNode> itemList){
+		int index=0;
+		FPNode child = root.getChild(itemList.get(index).getItem());
+
+		FPNode node=child;
+		if(child!=null){
+			while(child!=null){
+				child.increaseCount(itemList.get(index).getCount());
+				
+				node=child;
+				
+				index++;
+				if(index<itemList.size()){
+					child=node.getChild(itemList.get(index).getItem());
+				}else{
+					break;
+				}
+			}
+			
+		}else{
+			node = root.addChild(itemList.get(index).getItem());
+			node.increaseCount(itemList.get(index).getCount());
+			
+			headerTable.get(itemList.get(index).getItem()).add(node);
+			
+			index++;
+		}
+
+		while(index<itemList.size()){
+			String item = itemList.get(index).getItem();
+			
+			FPNode newChild = node.addChild(item);
+			newChild.increaseCount(itemList.get(index).getCount());
+			
+			headerTable.get(item).add(newChild);
+			
+			node=newChild;
+			index++;
+		}
+	}
 	
 	public List<String> getSingleCandidates() {
 		return singleCandidates;
+	}
+	
+	/**
+	 * @param item
+	 * @return
+	 */
+	public int getItemCount(String item){
+		List<FPNode> itemNodeList = headerTable.get(item);
+		
+		int count=0;
+		for(FPNode node:itemNodeList){
+			count+=node.getCount();
+		}
+		
+		return count;
 	}
 
 	/**
@@ -120,5 +189,59 @@ public class FPTree {
 		}
 		
 		return conditionalPatternBase;
+	}
+	
+	/**
+	 * @param node
+	 */
+	public void removeFromHeaderTable(FPNode node){
+		headerTable.get(node.getItem()).remove(node);
+	}
+	
+	/**
+	 * filter the tree to remove the single items in the tree that count less than the assigned threshold
+	 * 
+	 * please notice that filter is not necessary for the initial FP Tree since all the single items in it are frequent single item
+	 * This is needed when we create FP Tree from Conditional Pattern Base, because it is just a sub-tree of the total FP Tree 
+	 * 
+	 * @param threshold
+	 */
+	public void filterTree(int threshold){
+		
+		for(int index=singleCandidates.size()-1;index>=0;index--){
+			String item=singleCandidates.get(index);
+			List<FPNode> itemNodeList = headerTable.get(item);
+			
+			if(itemNodeList.size()>0){
+				int count=0;
+				for(FPNode node:itemNodeList){
+					count+=node.getCount();
+				}
+				
+				if(count<threshold){
+					for(FPNode node:itemNodeList){
+						List<FPNode> path = node.getPath();
+						FPNode parent=path.size()>=2? path.get(path.size()-2): root;
+						
+						//remove this node as child of its parent
+						parent.removeChild(node);
+
+						//remove this node from path of all its descendants
+						List<FPNode> children=node.getChildren();
+						Queue<FPNode> queue=new LinkedList<FPNode>();
+						queue.addAll(children);
+						while(!queue.isEmpty()) {
+							FPNode descendant = queue.poll();
+							descendant.removeFromPath(node);
+							queue.addAll(descendant.getChildren());
+						}
+						
+						parent.addAndMergeChildren(children);
+					}
+					
+					this.headerTable.put(item, new LinkedList<FPNode>());
+				}
+			}
+		}
 	}
 }
