@@ -199,6 +199,23 @@ public class FPTree {
 	}
 	
 	/**
+	 * @return
+	 */
+	public boolean isSinglePathTree(){
+		FPNode node=root;
+		
+		while(node.getChildren().size()<=1){
+			if(node.getChildren().size()==0){
+				return true;
+			}else{
+				node=node.getChildren().get(0);
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
 	 * filter the tree to remove the single items in the tree that count less than the assigned threshold
 	 * 
 	 * please notice that filter is not necessary for the initial FP Tree since all the single items in it are frequent single item
