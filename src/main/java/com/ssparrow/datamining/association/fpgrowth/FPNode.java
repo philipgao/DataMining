@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ssparrow.datamining.apriori;
+package com.ssparrow.datamining.association.fpgrowth;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

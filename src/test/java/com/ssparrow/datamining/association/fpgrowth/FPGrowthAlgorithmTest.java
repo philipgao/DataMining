@@ -1,4 +1,4 @@
-package com.ssparrow.datamining.apriori;
+package com.ssparrow.datamining.association.fpgrowth;
 
 import static org.junit.Assert.*;
 
@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
+
+import com.ssparrow.datamining.association.fpgrowth.FPGrowthAlgorithm;
 
 public class FPGrowthAlgorithmTest {
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ssparrow.datamining.apriori;
+package com.ssparrow.datamining.association;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

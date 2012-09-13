@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ssparrow.datamining.apriori;
+package com.ssparrow.datamining.association.fpgrowth;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import com.ssparrow.datamining.association.AbstractAssociationMiningAlgorithm;
 
 import sun.misc.FpUtils;
 

@@ -1,4 +1,4 @@
-package com.ssparrow.datamining.apriori;
+package com.ssparrow.datamining.association.fpgrowth;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

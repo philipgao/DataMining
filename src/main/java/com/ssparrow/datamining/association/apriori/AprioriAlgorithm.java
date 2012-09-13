@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ssparrow.datamining.apriori;
+package com.ssparrow.datamining.association.apriori;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import com.ssparrow.datamining.association.AbstractAssociationMiningAlgorithm;
 
 /**
  * @author Gao, Fei
