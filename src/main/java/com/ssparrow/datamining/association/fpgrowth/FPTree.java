@@ -4,11 +4,13 @@
 package com.ssparrow.datamining.association.fpgrowth;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TreeMap;
 
 /**
  * @author Gao, Fei
@@ -17,19 +19,31 @@ import java.util.Queue;
 public class FPTree {
 	private List<String> singleCandidates;
 	private FPNode root=new FPNode(this, "");
-	private Map<String, List<FPNode>> headerTable=new LinkedHashMap<String, List<FPNode>>();
+	private Map<String, List<FPNode>> headerTable;
+	private boolean isSingleItemPruned;
 	
 	/**
 	 * initialize header table
 	 * 
 	 */
 	public FPTree(List<String> singleCandidates) {
+		this(singleCandidates, true);
+	}
+	
+	public FPTree(List<String> singleCandidates, boolean isSingleItemPruned) {
+		this.isSingleItemPruned=isSingleItemPruned;
+		
+		if(isSingleItemPruned){
+			headerTable=new LinkedHashMap<String, List<FPNode>>();
+		}else{
+			headerTable=new TreeMap<String, List<FPNode>>();
+		}
+
 		for(String item:singleCandidates){
 			headerTable.put(item, new LinkedList<FPNode>());
 		}
 		this.singleCandidates=singleCandidates;
 	}
-
 	/**
 	 * @return the root
 	 */
@@ -69,10 +83,12 @@ public class FPTree {
 			}
 			
 		}else{
-			node = root.addChild(itemList.get(index));
+			String item = itemList.get(index);
+			
+			node = root.addChild(item);
 			node.increaseCount(1);
 			
-			headerTable.get(itemList.get(index)).add(node);
+			this.addNodeToHeaderTable(item, node);
 			
 			index++;
 		}
@@ -83,11 +99,26 @@ public class FPTree {
 			FPNode newChild = node.addChild(item);
 			newChild.increaseCount(1);
 			
-			headerTable.get(item).add(newChild);
+			this.addNodeToHeaderTable(item, newChild);
 			
 			node=newChild;
 			index++;
 		}
+	}
+	
+	/**
+	 * @param item
+	 * @param node
+	 */
+	private void addNodeToHeaderTable(String item, FPNode node){
+		List<FPNode> itemNodeList = headerTable.get(item);
+		if(itemNodeList==null){
+			itemNodeList=new LinkedList<FPNode>();
+			headerTable.put(item, itemNodeList);
+			
+			singleCandidates.add(item);
+		}
+		itemNodeList.add(node);
 	}
 	
 	/**
@@ -116,7 +147,7 @@ public class FPTree {
 			node = root.addChild(itemList.get(index).getItem());
 			node.increaseCount(itemList.get(index).getCount());
 			
-			headerTable.get(itemList.get(index).getItem()).add(node);
+			this.addNodeToHeaderTable(itemList.get(index).getItem(), node);
 			
 			index++;
 		}
@@ -127,7 +158,7 @@ public class FPTree {
 			FPNode newChild = node.addChild(item);
 			newChild.increaseCount(itemList.get(index).getCount());
 			
-			headerTable.get(item).add(newChild);
+			this.addNodeToHeaderTable(item, newChild);
 			
 			node=newChild;
 			index++;
@@ -224,6 +255,10 @@ public class FPTree {
 	 * @param threshold
 	 */
 	public void filterTree(int threshold){
+		
+		if(!isSingleItemPruned){
+			Collections.sort(singleCandidates);
+		}
 		
 		for(int index=singleCandidates.size()-1;index>=0;index--){
 			String item=singleCandidates.get(index);

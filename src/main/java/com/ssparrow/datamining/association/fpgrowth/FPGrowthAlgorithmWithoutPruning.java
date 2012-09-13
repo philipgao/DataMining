@@ -26,25 +26,18 @@ public class FPGrowthAlgorithmWithoutPruning extends
      */
     @Override
     public void findFrequentItemSets(List<List<String>> transactions,  int threshold) {
-	Set<String> singleCandidateSet=new TreeSet<String>();
-	for(List<String> transaction:transactions){
-	    for(String item:transaction){
-		singleCandidateSet.add(item);
-	    }
-	}
+		List<String> singleCandidates=new ArrayList<String>();
+		
+		FPTree fpTree=new FPTree(singleCandidates,false);
+		for(List<String > transaction:transactions){
+		    Collections.sort(transaction);
+		    
+		    fpTree.addToTree(transaction);
+		}
+		
+		fpTree.filterTree(threshold);
 	
-	List<String> singleCandidates=new ArrayList<String>(singleCandidateSet);
-	
-	FPTree fpTree=new FPTree(singleCandidates);
-	for(List<String > transaction:transactions){
-	    Collections.sort(transaction);
-	    
-	    fpTree.addToTree(transaction);
-	}
-	
-	fpTree.filterTree(threshold);
-
-	FPTreeUtil.getFrequentItemSet(singleCandidates, fpTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
+		FPTreeUtil.getFrequentItemSet(singleCandidates, fpTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
     }
 
 }
