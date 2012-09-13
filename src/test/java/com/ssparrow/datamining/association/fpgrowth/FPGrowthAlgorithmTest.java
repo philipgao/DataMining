@@ -79,6 +79,12 @@ List<List<String>> transactions = new ArrayList<List<String>>();
 		assertEquals("{[c, p]=3, [c, m]=3, [f, m]=3, [c, f, m]=3, [a, m]=3, [a, c, m]=3, [a, f, m]=3, [a, c, f, m]=3, [a, c]=3, [a, f]=3, [a, c, f]=3, [c, f]=3}",
 						patterns.toString());
 		
+		FPGrowthAlgorithmWithoutPruning fpgrowthAlgorithmWithoutPruning=new FPGrowthAlgorithmWithoutPruning();
+		fpgrowthAlgorithmWithoutPruning.findFrequentItemSets(transactions, 3);
+		Map<Set<String>, Integer> frequentItemSets = fpgrowthAlgorithmWithoutPruning.getFrequentItemSets(2);
+		assertEquals(12, frequentItemSets.size());
+		
+		
 	}
 
 }

@@ -261,4 +261,20 @@ public class FPTree {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+	    StringBuffer sb= new StringBuffer();
+	    
+	    sb.append("{");
+	    FPNode node = this.root;
+	    List<FPNode> children = node.getChildren();
+	    for(FPNode child:children){
+		sb.append(child.toString());
+	    }
+	    sb.append("}");
+	    
+	    return sb.toString();
+	}
+	
 }

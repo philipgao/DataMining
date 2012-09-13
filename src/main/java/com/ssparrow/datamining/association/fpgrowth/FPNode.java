@@ -114,6 +114,9 @@ public class FPNode {
 				
 				newChild.getFpTree().removeFromHeaderTable(newChild);
 				
+			}else{
+			    children.add(newChild);
+			    childrenMap.put(newChild.getItem(), newChild);
 			}
 		}
 	}
@@ -173,7 +176,14 @@ public class FPNode {
 
 	@Override
 	public String toString() {
-		return "[" + item + ":" + count + "]";
+	    StringBuffer sb=new StringBuffer();
+	    sb.append("{");
+	    sb.append("[").append(item).append(":").append(count).append("]");
+	    for(FPNode child:children){
+		sb.append(child.toString());
+	    }
+	    sb.append("}");
+	    return sb.toString();
 	}
 	
 	

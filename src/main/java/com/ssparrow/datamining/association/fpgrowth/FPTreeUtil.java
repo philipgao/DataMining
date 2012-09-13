@@ -18,13 +18,13 @@ public class FPTreeUtil {
 	 * @param baseItemSets
 	 * @return
 	 */
-	public static void getFrequentItemSet(List<String> singleCandidates, Map<String, Integer> singleItemCountMap, FPTree fpTree, int threshold,Map<Set<String>, Integer> frequentItemSets, Map<Set<String>, Integer> baseItemSets){
+	public static void getFrequentItemSet(List<String> singleCandidates, FPTree fpTree, int threshold,Map<Set<String>, Integer> frequentItemSets, Map<Set<String>, Integer> baseItemSets){
 		if(fpTree.isEmpty()){
 			return;
 		}
 		
 		if(fpTree.isSinglePathTree()){
-			getFrequentItemSetForSinglePathTree(singleCandidates, singleItemCountMap, fpTree, threshold, frequentItemSets, baseItemSets);
+			getFrequentItemSetForSinglePathTree(singleCandidates,  fpTree, threshold, frequentItemSets, baseItemSets);
 			return;
 		}
 		
@@ -56,7 +56,7 @@ public class FPTreeUtil {
 			List<List<FPNode>> conditionalPatternBase = fpTree.getConditionalPatternBase(item);
 			FPTree newFpTreee = createFpTreeFromConditionalPatternBase(singleCandidates, conditionalPatternBase, threshold);
 			
-			getFrequentItemSet(singleCandidates, singleItemCountMap, newFpTreee, threshold, frequentItemSets, newBaseItemSets);
+			getFrequentItemSet(singleCandidates, newFpTreee, threshold, frequentItemSets, newBaseItemSets);
 		}
 		
 		return;
@@ -70,7 +70,7 @@ public class FPTreeUtil {
 	 * @param frequentItemSets
 	 * @param baseItemSets
 	 */
-	private static void getFrequentItemSetForSinglePathTree(List<String> singleCandidates, Map<String, Integer> singleItemCountMap, FPTree fpTree, int threshold,Map<Set<String>, Integer> frequentItemSets, Map<Set<String>, Integer> baseItemSets){
+	private static void getFrequentItemSetForSinglePathTree(List<String> singleCandidates, FPTree fpTree, int threshold,Map<Set<String>, Integer> frequentItemSets, Map<Set<String>, Integer> baseItemSets){
 		FPNode node=fpTree.getRoot();
 		FPNode child=node.getChildren().size()>0?node.getChildren().get(0):null;
 		

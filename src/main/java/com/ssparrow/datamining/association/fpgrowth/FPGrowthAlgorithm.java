@@ -86,7 +86,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 			fpTree.addToTree(itemList);
 		}
 		
-		FPTreeUtil.getFrequentItemSet(singleCandidates, singleItemCountMap, fpTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
+		FPTreeUtil.getFrequentItemSet(singleCandidates, fpTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
 	}
 
 }
