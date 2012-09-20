@@ -88,8 +88,6 @@ public class FPTree {
 			node = root.addChild(item);
 			node.increaseCount(1);
 			
-			this.addNodeToHeaderTable(item, node);
-			
 			index++;
 		}
 
@@ -98,8 +96,6 @@ public class FPTree {
 			
 			FPNode newChild = node.addChild(item);
 			newChild.increaseCount(1);
-			
-			this.addNodeToHeaderTable(item, newChild);
 			
 			node=newChild;
 			index++;
@@ -110,7 +106,8 @@ public class FPTree {
 	 * @param item
 	 * @param node
 	 */
-	private void addNodeToHeaderTable(String item, FPNode node){
+	public void addNodeToHeaderTable(FPNode node){
+		String item=node.getItem();
 		List<FPNode> itemNodeList = headerTable.get(item);
 		if(itemNodeList==null){
 			itemNodeList=new LinkedList<FPNode>();
@@ -147,8 +144,6 @@ public class FPTree {
 			node = root.addChild(itemList.get(index).getItem());
 			node.increaseCount(itemList.get(index).getCount());
 			
-			this.addNodeToHeaderTable(itemList.get(index).getItem(), node);
-			
 			index++;
 		}
 
@@ -157,8 +152,6 @@ public class FPTree {
 			
 			FPNode newChild = node.addChild(item);
 			newChild.increaseCount(itemList.get(index).getCount());
-			
-			this.addNodeToHeaderTable(item, newChild);
 			
 			node=newChild;
 			index++;
@@ -295,6 +288,16 @@ public class FPTree {
 				}
 			}
 		}
+	}
+
+	/**
+	 * merge another tree into current tree
+	 * this is the base operation for distributed pattern, which requires we handle locally build tree on each node
+	 * 
+	 * @param targetTree
+	 */
+	public void mergeTree(FPTree targetTree){
+		root.mergeSubTree(targetTree.getRoot());
 	}
 
 	@Override

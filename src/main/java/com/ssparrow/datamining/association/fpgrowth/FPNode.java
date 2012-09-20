@@ -72,9 +72,23 @@ public class FPNode {
 		children.add(child);
 		childrenMap.put(child.getItem(), child);
 		
-		List<FPNode> childPath=new ArrayList<FPNode>(this.path);
-		childPath.add(child);
-		child.setPath(childPath);
+		child.setFpTree(this.getFpTree());
+		
+		child.updatePath(this);
+		
+		child.addSubTreeToHeadertable();
+	}
+	
+	/**
+	 * add node to header table of dp tree
+	 * this usually happens when we merge nodes in one tree to another
+	 */
+	public void addSubTreeToHeadertable(){
+		this.getFpTree().addNodeToHeaderTable(this);
+		
+		for(FPNode child:this.getChildren()){
+			child.addSubTreeToHeadertable();
+		}
 	}
 	
 	/**
@@ -162,6 +176,20 @@ public class FPNode {
 			path.add(index, tgtNode);
 		}
 	}
+	
+	/**
+	 * @param parent
+	 */
+	public void updatePath(FPNode parent){
+		List<FPNode> parentPath = parent.getPath();
+		List<FPNode> newPath=new ArrayList<FPNode>(parentPath);
+		newPath.add(this);
+		this.path=newPath;
+		
+		for(FPNode child:children){
+			child.updatePath(this);
+		}
+	}
 
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
@@ -170,8 +198,63 @@ public class FPNode {
 		return clone;
 	}
 
+	/**
+	 * clone current node and all the node under it
+	 * 
+	 * @return
+	 * @throws CloneNotSupportedException
+	 */
+	public FPNode cloneWithChildren() throws CloneNotSupportedException{
+		FPNode clone = (FPNode) this.clone();
+		
+		for(FPNode child:children){
+			FPNode childClone = (FPNode) child.cloneWithChildren();
+			clone.addChild(childClone);
+		}
+		
+		return clone;
+	}
+	
+	/**
+	 * merge this node with target node, along with the sub-tree below each node
+	 * 
+	 * @param targetNode
+	 */
+	public void mergeSubTree(FPNode targetNode){
+		if(this.getItem().equals(targetNode.getItem())){
+			int currentCount = this.getCount();
+			this.setCount(currentCount+targetNode.getCount());
+			
+			List<FPNode> targetChildren = targetNode.getChildren();
+
+			for(FPNode targetChild:targetChildren){
+				FPNode child = this.getChild(targetChild.getItem());
+				if(child!=null){
+					child.mergeSubTree(targetChild);
+				}else{
+					try {
+						FPNode cloneWithChildren = targetChild.cloneWithChildren();
+						this.addChild(cloneWithChildren);
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @return
+	 */
 	public FPTree getFpTree() {
 		return fpTree;
+	}
+
+	/**
+	 * @param fpTree
+	 */
+	public void setFpTree(FPTree fpTree) {
+		this.fpTree = fpTree;
 	}
 
 	@Override
