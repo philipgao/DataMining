@@ -1,9 +1,14 @@
 package com.ssparrow.datamining.association.fpgrowth;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -24,7 +29,7 @@ public class FPTreeUtil {
 		}
 		
 		if(fpTree.isSinglePathTree()){
-			getFrequentItemSetForSinglePathTree(singleCandidates,  fpTree, threshold, frequentItemSets, baseItemSets);
+			getFrequentItemSetForSinglePathTree(fpTree, threshold, frequentItemSets, baseItemSets);
 			return;
 		}
 		
@@ -70,7 +75,7 @@ public class FPTreeUtil {
 	 * @param frequentItemSets
 	 * @param baseItemSets
 	 */
-	private static void getFrequentItemSetForSinglePathTree(List<String> singleCandidates, FPTree fpTree, int threshold,Map<Set<String>, Integer> frequentItemSets, Map<Set<String>, Integer> baseItemSets){
+	private static void getFrequentItemSetForSinglePathTree(FPTree fpTree, int threshold,Map<Set<String>, Integer> frequentItemSets, Map<Set<String>, Integer> baseItemSets){
 		FPNode node=fpTree.getRoot();
 		FPNode child=node.getChildren().size()>0?node.getChildren().get(0):null;
 		
@@ -110,7 +115,8 @@ public class FPTreeUtil {
 	 * @return
 	 */
 	private static FPTree createFpTreeFromConditionalPatternBase(List<String> singleCandidates, List<List<FPNode>> conditionalPatternBase, int threshold){
-		FPTree fpTree=new FPTree(singleCandidates);
+		List<String> baseCandidates=new ArrayList<String>(singleCandidates);
+		FPTree fpTree=new FPTree(baseCandidates);
 		
 		//create fp tree from the conditional pattern base
 		for(List<FPNode> path:conditionalPatternBase){
@@ -122,6 +128,83 @@ public class FPTreeUtil {
 		fpTree.filterTree(threshold);
 		
 		return fpTree;
+	}
+	
+
+	
+	/**
+	 * @param frequentSingleItems
+	 */
+	public static FPTree reconstructTree(FPTree fpTree, final List<String> frequentSingleItems){
+		fpTree.filterTree(frequentSingleItems);
+		
+		FPNode root = fpTree.getRoot();
+		List<String> singleCandidates = fpTree.getSingleCandidates();
+		
+		if(singleCandidates.equals(frequentSingleItems)){
+			return fpTree;
+		}
+		
+		FPTree newFPTree=new FPTree(frequentSingleItems);
+		
+		Queue<FPNode> leafs=new LinkedList<FPNode>();
+		
+		Queue<FPNode> queue=new LinkedList<FPNode>();
+		queue.offer(root);
+		while(!queue.isEmpty()){
+			FPNode node = queue.poll();
+			List<FPNode> children = node.getChildren();
+			if(children.isEmpty()){
+				leafs.add(node);
+			}else{
+				queue.addAll(children);
+			}
+		}
+		
+		Comparator<FPNode> nodeComparator=new Comparator<FPNode>() {
+			@Override
+			public int compare(FPNode o1, FPNode o2) {
+				return frequentSingleItems.indexOf(o1.getItem())-frequentSingleItems.indexOf(o2.getItem());
+			}
+		};
+		
+		while(!leafs.isEmpty()){
+			FPNode leaf=leafs.poll();
+			
+			List<FPNode> nodeList=new ArrayList<FPNode>();
+			
+			int count=leaf.getCount();
+			List<FPNode> path = leaf.getPath();
+			
+			FPNode nodeToDelete=null;
+			for(int index=path.size()-1; index>=0;index--){
+				FPNode node = path.get(index);
+				try {
+					FPNode clone = (FPNode)node.clone();
+					clone.setCount(count);
+					nodeList.add(clone);
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
+				}
+				
+				if(nodeToDelete!=null){
+					node.removeChild(nodeToDelete);
+				}
+				
+				int newCount=node.getCount()-count;
+				node.setCount(newCount);
+				
+				if(newCount==0){
+					nodeToDelete=node;
+				}else if(node.getChildren().size()==0){
+					leafs.offer(node);
+				}
+			}
+			
+			Collections.sort(nodeList, nodeComparator);
+			newFPTree.addClonedNodesToTree(nodeList);
+		}
+		return newFPTree;
 	}
 	
 	/**

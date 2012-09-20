@@ -253,6 +253,7 @@ public class FPTree {
 			Collections.sort(singleCandidates);
 		}
 		
+		List<String> deleteList=new ArrayList<String>();
 		for(int index=singleCandidates.size()-1;index>=0;index--){
 			String item=singleCandidates.get(index);
 			List<FPNode> itemNodeList = headerTable.get(item);
@@ -264,30 +265,60 @@ public class FPTree {
 				}
 				
 				if(count<threshold){
-					for(FPNode node:itemNodeList){
-						List<FPNode> path = node.getPath();
-						FPNode parent=path.size()>=2? path.get(path.size()-2): root;
-						
-						//remove this node as child of its parent
-						parent.removeChild(node);
-
-						//remove this node from path of all its descendants
-						List<FPNode> children=node.getChildren();
-						Queue<FPNode> queue=new LinkedList<FPNode>();
-						queue.addAll(children);
-						while(!queue.isEmpty()) {
-							FPNode descendant = queue.poll();
-							descendant.removeFromPath(node);
-							queue.addAll(descendant.getChildren());
-						}
-						
-						parent.addAndMergeChildren(children);
-					}
-					
-					this.headerTable.put(item, new LinkedList<FPNode>());
+					deleteList.add(item);
+					pruneTree(item);
 				}
 			}
 		}
+		singleCandidates.removeAll(deleteList);
+	}
+	
+	/**
+	 * filter tree based on new single item candidates
+	 * this happens when we build the tree with arbitrary order and then reconstruct it using frequent item order
+	 * 
+	 * @param frequentSingleItems
+	 */
+	public void filterTree(List<String> frequentSingleItems){
+		List<String> deleteList=new ArrayList<String>();
+		for(int index=singleCandidates.size()-1;index>=0;index--){
+			String item=singleCandidates.get(index);
+			if(!frequentSingleItems.contains(item) && headerTable.get(item).size()>0){
+				deleteList.add(item);
+				pruneTree(item);
+			}
+		}
+		singleCandidates.removeAll(deleteList);
+	}
+
+	/**
+	 * @param item
+	 * @param itemNodeList
+	 */
+	private void pruneTree(String item) {
+		List<FPNode> itemNodeList = headerTable.get(item);
+		
+		for(FPNode node:itemNodeList){
+			List<FPNode> path = node.getPath();
+			FPNode parent=path.size()>=2? path.get(path.size()-2): root;
+			
+			//remove this node as child of its parent
+			parent.removeChild(node);
+
+			//remove this node from path of all its descendants
+			List<FPNode> children=node.getChildren();
+			Queue<FPNode> queue=new LinkedList<FPNode>();
+			queue.addAll(children);
+			while(!queue.isEmpty()) {
+				FPNode descendant = queue.poll();
+				descendant.removeFromPath(node);
+				queue.addAll(descendant.getChildren());
+			}
+			
+			parent.addAndMergeChildren(children);
+		}
+		
+		this.headerTable.put(item, new LinkedList<FPNode>());
 	}
 
 	/**
