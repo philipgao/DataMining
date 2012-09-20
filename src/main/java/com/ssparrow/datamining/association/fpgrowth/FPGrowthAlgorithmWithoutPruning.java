@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import com.ssparrow.datamining.association.AbstractAssociationMiningAlgorithm;
 
 /**
- * @author Gao, Fei(fei.gao@hp.com)
+ * @author Gao, Fei
  *
  */
 public class FPGrowthAlgorithmWithoutPruning extends
@@ -25,14 +25,15 @@ public class FPGrowthAlgorithmWithoutPruning extends
      * @param threshold
      */
     @Override
-    public void findFrequentItemSets(List<List<String>> transactions,  int threshold) {
+    public void findFrequentItemSets(Map<String, List<String>> transactions,  int threshold) {
 		List<String> singleCandidates=new ArrayList<String>();
 		
 		FPTree fpTree=new FPTree(singleCandidates,false);
-		for(List<String > transaction:transactions){
+		for(String tid:transactions.keySet()){
+			List<String> transaction =transactions.get(tid);
 		    Collections.sort(transaction);
 		    
-		    fpTree.addToTree(transaction);
+		    fpTree.addToTree(tid, transaction);
 		}
 		
 		fpTree.filterTree(threshold);

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -63,14 +64,14 @@ public class FPTree {
 	 * 
 	 * @param itemList
 	 */
-	public void addToTree(List<String> itemList){
+	public void addToTree(String tid, List<String> itemList){
 		int index=0;
 		FPNode child = root.getChild(itemList.get(index));
 
 		FPNode node=child;
 		if(child!=null){
 			while(child!=null){
-				child.increaseCount(1);
+				child.addTransaction(tid);
 				
 				node=child;
 				
@@ -86,7 +87,7 @@ public class FPTree {
 			String item = itemList.get(index);
 			
 			node = root.addChild(item);
-			node.increaseCount(1);
+			node.addTransaction(tid);
 			
 			index++;
 		}
@@ -95,7 +96,7 @@ public class FPTree {
 			String item = itemList.get(index);
 			
 			FPNode newChild = node.addChild(item);
-			newChild.increaseCount(1);
+			newChild.addTransaction(tid);
 			
 			node=newChild;
 			index++;
@@ -128,7 +129,7 @@ public class FPTree {
 		FPNode node=child;
 		if(child!=null){
 			while(child!=null){
-				child.increaseCount(itemList.get(index).getCount());
+				child.addTransaction(itemList.get(index).getTransactionSet());
 				
 				node=child;
 				
@@ -142,7 +143,7 @@ public class FPTree {
 			
 		}else{
 			node = root.addChild(itemList.get(index).getItem());
-			node.increaseCount(itemList.get(index).getCount());
+			node.addTransaction(itemList.get(index).getTransactionSet());
 			
 			index++;
 		}
@@ -151,7 +152,7 @@ public class FPTree {
 			String item = itemList.get(index).getItem();
 			
 			FPNode newChild = node.addChild(item);
-			newChild.increaseCount(itemList.get(index).getCount());
+			newChild.addTransaction(itemList.get(index).getTransactionSet());
 			
 			node=newChild;
 			index++;
@@ -171,7 +172,7 @@ public class FPTree {
 		
 		int count=0;
 		for(FPNode node:itemNodeList){
-			count+=node.getCount();
+			count+=node.getTransactionSet().size();
 		}
 		
 		return count;
@@ -196,13 +197,13 @@ public class FPTree {
 		for(List<FPNode> path:pathList){
 			List<FPNode> clonedPath=new ArrayList<FPNode>();
 			
-			int count=path.get(path.size()-1).getCount();
+			Set<String> transactionSet = path.get(path.size()-1).getTransactionSet();
 			//clonedPath.add(0, (FPNode) path.get(path.size()-1).clone());
 			
 			for(int i=path.size()-2;i>=0;i--){
 				try {
 					FPNode clone = (FPNode)path.get(i).clone();
-					clone.setCount(count);
+					clone.setTransactionSet(transactionSet);
 					clonedPath.add(0, clone);
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
@@ -261,7 +262,7 @@ public class FPTree {
 			if(itemNodeList.size()>0){
 				int count=0;
 				for(FPNode node:itemNodeList){
-					count+=node.getCount();
+					count+=node.getTransactionSet().size();
 				}
 				
 				if(count<threshold){

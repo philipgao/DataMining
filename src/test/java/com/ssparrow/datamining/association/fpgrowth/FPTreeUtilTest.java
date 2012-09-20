@@ -37,7 +37,7 @@ public class FPTreeUtilTest {
 		itemList.add("m");
 		itemList.add("p");
 		Collections.sort(itemList);
-		fpTree.addToTree(itemList);
+		fpTree.addToTree("1", itemList);
 		
 		//a, b, c, f, l, m, o
 		itemList=new ArrayList<String>();
@@ -49,7 +49,7 @@ public class FPTreeUtilTest {
 		itemList.add("m");
 		itemList.add("o");
 		Collections.sort(itemList);
-		fpTree.addToTree(itemList);
+		fpTree.addToTree("2", itemList);
 		
 		//b, f, h, j, o
 		itemList=new ArrayList<String>();
@@ -59,7 +59,7 @@ public class FPTreeUtilTest {
 		itemList.add("j");
 		itemList.add("o");
 		Collections.sort(itemList);
-		fpTree.addToTree(itemList);
+		fpTree.addToTree("3", itemList);
 
 		//b, c, k, s, p
 		itemList=new ArrayList<String>();
@@ -69,7 +69,7 @@ public class FPTreeUtilTest {
 		itemList.add("s");
 		itemList.add("p");
 		Collections.sort(itemList);
-		fpTree.addToTree(itemList);
+		fpTree.addToTree("4", itemList);
 
 		//a, f, c, e, l, p, m, n
 		itemList=new ArrayList<String>();
@@ -82,7 +82,7 @@ public class FPTreeUtilTest {
 		itemList.add("m");
 		itemList.add("n");
 		Collections.sort(itemList);
-		fpTree.addToTree(itemList);
+		fpTree.addToTree("5", itemList);
 		
 		//c, f, a, b, m, p
 		List<String> frequentSingleItems=new ArrayList<String>();

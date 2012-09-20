@@ -3,7 +3,6 @@
  */
 package com.ssparrow.datamining.association;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,7 @@ public abstract class AbstractAssociationMiningAlgorithm {
 	 * @param transactions
 	 * @param threshold
 	 */
-	public abstract void findFrequentItemSets(List<List<String>> transactions, int threshold);
+	public abstract void findFrequentItemSets(Map<String, List<String>> transactions, int threshold);
 	
 	/**
 	 * @return the frequentItemSets

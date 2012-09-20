@@ -3,6 +3,7 @@ package com.ssparrow.datamining.association.fpgrowth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -173,7 +174,7 @@ public class FPTreeUtil {
 			
 			List<FPNode> nodeList=new ArrayList<FPNode>();
 			
-			int count=leaf.getCount();
+			Set<String> transactionSet = new HashSet<String>(leaf.getTransactionSet());
 			List<FPNode> path = leaf.getPath();
 			
 			FPNode nodeToDelete=null;
@@ -181,7 +182,7 @@ public class FPTreeUtil {
 				FPNode node = path.get(index);
 				try {
 					FPNode clone = (FPNode)node.clone();
-					clone.setCount(count);
+					clone.setTransactionSet(transactionSet);
 					nodeList.add(clone);
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
@@ -191,8 +192,8 @@ public class FPTreeUtil {
 					node.removeChild(nodeToDelete);
 				}
 				
-				int newCount=node.getCount()-count;
-				node.setCount(newCount);
+				node.removeTransaction(transactionSet);
+				int newCount=node.getCount();
 				
 				if(newCount==0){
 					nodeToDelete=node;
@@ -277,7 +278,7 @@ public class FPTreeUtil {
 		
 		for(String item:singleCandidates){
 			boolean finished=true;
-			int count=0;
+			Set<String> transactionSet=new HashSet<String>();
 			
 			//go through all the paths in each loop, until all the path are finished
 			for(int index=0;index<conditionalPatternBase.size();index++){
@@ -288,7 +289,7 @@ public class FPTreeUtil {
 					finished=false;
 					
 					if(path.get(0).getItem().equals(item)){
-						count+=path.get(0).getCount();
+						transactionSet.addAll(path.get(0).getTransactionSet());
 						
 						//remove the top node anyway, whether it is kept or discarded
 						path.remove(0);
@@ -299,9 +300,9 @@ public class FPTreeUtil {
 			}
 			
 			//if the count match threshold, create node for the merged count and add the node to the tree
-			if(count>=threshold){
+			if(transactionSet.size()>=threshold){
 				FPNode child=new FPNode(fpTree, item);
-				child.setCount(count);
+				child.setTransactionSet(transactionSet);
 				
 				node.addChild(child);
 				node=child;

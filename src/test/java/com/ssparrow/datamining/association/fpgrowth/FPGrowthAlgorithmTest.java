@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +17,7 @@ public class FPGrowthAlgorithmTest {
 
 	@Test
 	public void testFindFrequentItemSets() {
-List<List<String>> transactions = new ArrayList<List<String>>();
+		Map<String, List<String>> transactions = new LinkedHashMap<String, List<String>>();
 		
 		//f, a, c, d, g, i, m, p
 		List<String> transaction=new ArrayList<String>();
@@ -28,7 +29,7 @@ List<List<String>> transactions = new ArrayList<List<String>>();
 		transaction.add("i");
 		transaction.add("m");
 		transaction.add("p");
-		transactions.add(transaction);
+		transactions.put("1", transaction);
 		
 		//a, b, c, f, l, m, o
 		transaction=new ArrayList<String>();
@@ -39,7 +40,7 @@ List<List<String>> transactions = new ArrayList<List<String>>();
 		transaction.add("l");
 		transaction.add("m");
 		transaction.add("o");
-		transactions.add(transaction);
+		transactions.put("2", transaction);
 		
 		//b, f, h, j, o
 		transaction=new ArrayList<String>();
@@ -48,7 +49,7 @@ List<List<String>> transactions = new ArrayList<List<String>>();
 		transaction.add("h");
 		transaction.add("j");
 		transaction.add("o");
-		transactions.add(transaction);
+		transactions.put("3", transaction);
 
 		//b, c, k, s, p
 		transaction=new ArrayList<String>();
@@ -57,7 +58,7 @@ List<List<String>> transactions = new ArrayList<List<String>>();
 		transaction.add("k");
 		transaction.add("s");
 		transaction.add("p");
-		transactions.add(transaction);
+		transactions.put("4", transaction);
 
 		//a, f, c, e, l, p, m, n
 		transaction=new ArrayList<String>();
@@ -69,7 +70,7 @@ List<List<String>> transactions = new ArrayList<List<String>>();
 		transaction.add("p");
 		transaction.add("m");
 		transaction.add("n");
-		transactions.add(transaction);
+		transactions.put("5", transaction);
 		
 		FPGrowthAlgorithm fpGrowthAlgorithm = new FPGrowthAlgorithm();
 		fpGrowthAlgorithm.findFrequentItemSets(transactions, 3);;

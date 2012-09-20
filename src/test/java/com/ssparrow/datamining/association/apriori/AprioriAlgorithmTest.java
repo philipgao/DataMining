@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class AprioriAlgorithmTest {
 	 */
 	@Test
 	public void testFindFrequentItemSetsWithMoreThanOneItems() {
-		List<List<String>> transactions = new ArrayList<List<String>>();
+		Map<String, List<String>> transactions = new LinkedHashMap<String, List<String>>();
 		
 		//{1,2,3,4}
 		List<String> transaction=new ArrayList<String>();
@@ -35,45 +36,45 @@ public class AprioriAlgorithmTest {
 		transaction.add("2");
 		transaction.add("3");
 		transaction.add("4");
-		transactions.add(transaction);
+		transactions.put("1", transaction);
 		
 		//{1,2}
 		transaction=new ArrayList<String>();
 		transaction.add("1");
 		transaction.add("2");
-		transactions.add(transaction);
+		transactions.put("2", transaction);
 		
 		//{2,3,4}
 		transaction=new ArrayList<String>();
 		transaction.add("2");
 		transaction.add("3");
 		transaction.add("4");
-		transactions.add(transaction);
+		transactions.put("3", transaction);
 
 		//{2,3}
 		transaction=new ArrayList<String>();
 		transaction.add("2");
 		transaction.add("3");
-		transactions.add(transaction);
+		transactions.put("4", transaction);
 
 		//{1,2,4}
 		transaction=new ArrayList<String>();
 		transaction.add("1");
 		transaction.add("2");
 		transaction.add("4");
-		transactions.add(transaction);
+		transactions.put("5", transaction);
 
 		//{3,4}
 		transaction=new ArrayList<String>();
 		transaction.add("3");
 		transaction.add("4");
-		transactions.add(transaction);
+		transactions.put("6", transaction);
 
 		//{2,4}
 		transaction=new ArrayList<String>();
 		transaction.add("2");
 		transaction.add("4");
-		transactions.add(transaction);
+		transactions.put("7", transaction);
 		
 		AprioriAlgorithm aprioriAlgorithm = new AprioriAlgorithm();
 		aprioriAlgorithm.findFrequentItemSets(transactions, 3);;
@@ -119,47 +120,47 @@ public class AprioriAlgorithmTest {
 	 */
 	@Test
 	public void testFindFrequentItemSetsAllSizes(){
-		List<List<String>> transactions = new ArrayList<List<String>>();
+		Map<String, List<String>> transactions = new LinkedHashMap<String, List<String>>();
 		
 		//A B
 		List<String> transaction=new ArrayList<String>();
 		transaction.add("A");
 		transaction.add("B");
-		transactions.add(transaction);
+		transactions.put("1", transaction);
 		
 		//A C E
 		transaction=new ArrayList<String>();
 		transaction.add("A");
 		transaction.add("C");
 		transaction.add("E");
-		transactions.add(transaction);
+		transactions.put("2", transaction);
 		
 		//B C
 		transaction=new ArrayList<String>();
 		transaction.add("B");
 		transaction.add("C");
-		transactions.add(transaction);
+		transactions.put("3", transaction);
 		
 		//A C D
 		transaction=new ArrayList<String>();
 		transaction.add("A");
 		transaction.add("C");
 		transaction.add("D");
-		transactions.add(transaction);
+		transactions.put("4", transaction);
 
 		//A B C
 		transaction=new ArrayList<String>();
 		transaction.add("A");
 		transaction.add("B");
 		transaction.add("C");
-		transactions.add(transaction);
+		transactions.put("5", transaction);
 
 		//A B D
 		transaction=new ArrayList<String>();
 		transaction.add("A");
 		transaction.add("B");
 		transaction.add("D");
-		transactions.add(transaction);
+		transactions.put("6", transaction);
 
 		//B C D E
 		transaction=new ArrayList<String>();
@@ -167,7 +168,7 @@ public class AprioriAlgorithmTest {
 		transaction.add("C");
 		transaction.add("D");
 		transaction.add("E");
-		transactions.add(transaction);
+		transactions.put("7", transaction);
 		
 		AprioriAlgorithm aprioriAlgorithm = new AprioriAlgorithm();
 		aprioriAlgorithm.findFrequentItemSets(transactions, 3);;
