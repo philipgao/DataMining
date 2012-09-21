@@ -66,7 +66,7 @@ public class FPTree {
 	 */
 	public void addToTree(String tid, List<String> itemList){
 		int index=0;
-		FPNode child = root.getChild(itemList.get(index));
+		FPNode child = root.getChildByItem(itemList.get(index));
 
 		FPNode node=child;
 		if(child!=null){
@@ -77,7 +77,7 @@ public class FPTree {
 				
 				index++;
 				if(index<itemList.size()){
-					child=node.getChild(itemList.get(index));
+					child=node.getChildByItem(itemList.get(index));
 				}else{
 					break;
 				}
@@ -124,7 +124,7 @@ public class FPTree {
 	 */
 	public void addClonedNodesToTree(List<FPNode> itemList){
 		int index=0;
-		FPNode child = root.getChild(itemList.get(index).getItem());
+		FPNode child = root.getChildByItem(itemList.get(index).getItem());
 
 		FPNode node=child;
 		if(child!=null){
@@ -135,7 +135,7 @@ public class FPTree {
 				
 				index++;
 				if(index<itemList.size()){
-					child=node.getChild(itemList.get(index).getItem());
+					child=node.getChildByItem(itemList.get(index).getItem());
 				}else{
 					break;
 				}

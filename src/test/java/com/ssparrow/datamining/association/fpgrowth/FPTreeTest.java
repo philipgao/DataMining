@@ -97,8 +97,12 @@ public class FPTreeTest {
 		itemList.add("d");
 		fpTree2.addToTree("26", itemList);
 		
-		fpTree1.mergeTree(fpTree2);
-		assertEquals("{{[a:7]{[b:4]{[c:2]{[d:1]}}{[d:2]}}{[c:2]{[d:1]}}{[d:1]}}{[c:1]{[d:1]}}{[b:4]{[c:3]{[d:3]}}{[d:1]}}{[d:1]}}", fpTree1.toString());
+		List<FPTree> treeList=new ArrayList<FPTree>();
+		treeList.add(fpTree1);
+		treeList.add(fpTree2);
+		
+		fpTree1 =FPTreeUtil.mergeTrees(treeList, singleCandidates);
+		assertEquals("{{[a:7]{[b:4]{[d:2]}{[c:2]{[d:1]}}}{[c:2]{[d:1]}}{[d:1]}}{[c:1]{[d:1]}}{[b:4]{[c:3]{[d:3]}}{[d:1]}}{[d:1]}}", fpTree1.toString());
 		
 		fpTree1.filterTree(5);
 		
@@ -107,5 +111,216 @@ public class FPTreeTest {
 		
 		assertEquals(8, frequentItemSets.size());
 	}
+	
+	@Test
+	public void testMergeTreeWithSameTransaction1() {
+		List<String> singleCandidates =  new ArrayList<String>();
+		singleCandidates.add("a");
+		singleCandidates.add("b");
+		singleCandidates.add("c");
+		singleCandidates.add("d");
+		
+		FPTree fpTree1=new FPTree(singleCandidates);
+		
+		List<String> itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("c");
+		fpTree1.addToTree("1", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree1.addToTree("2", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("d");
+		fpTree1.addToTree("3", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("c");
+		fpTree1.addToTree("4", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("c");
+		itemList.add("d");
+		fpTree1.addToTree("5", itemList);
 
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree1.addToTree("6", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("d");
+		fpTree1.addToTree("7", itemList);
+		
+		FPTree fpTree2=new FPTree(singleCandidates);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("1", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("d");
+		fpTree2.addToTree("2", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("3", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("d");
+		fpTree2.addToTree("4", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("d");
+		fpTree2.addToTree("5", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("6", itemList);
+
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("7", itemList);
+		
+		List<FPTree> treeList=new ArrayList<FPTree>();
+		treeList.add(fpTree1);
+		treeList.add(fpTree2);
+		
+		fpTree1 =FPTreeUtil.mergeTrees(treeList, singleCandidates);
+		assertEquals("{{[a:5]{[b:5]{[c:5]{[d:5]}}}}{[c:1]{[d:1]}}{[b:1]{[c:1]{[d:1]}}}}", fpTree1.toString());
+		
+		fpTree1.filterTree(5);
+		
+		Map<Set<String>, Integer> frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
+		FPTreeUtil.getFrequentItemSet(singleCandidates, fpTree1, 5, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
+		
+		assertEquals(15, frequentItemSets.size());
+	}
+
+	@Test
+	public void testMergeTreeWithSameTransaction2() {
+		List<String> singleCandidates =  new ArrayList<String>();
+		singleCandidates.add("a");
+		singleCandidates.add("b");
+		singleCandidates.add("c");
+		singleCandidates.add("d");
+		
+		FPTree fpTree1=new FPTree(singleCandidates);
+		
+		List<String> itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("c");
+		fpTree1.addToTree("1", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree1.addToTree("2", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("d");
+		fpTree1.addToTree("3", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("c");
+		fpTree1.addToTree("4", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("c");
+		itemList.add("d");
+		fpTree1.addToTree("5", itemList);
+
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree1.addToTree("6", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("b");
+		itemList.add("d");
+		fpTree1.addToTree("7", itemList);
+		
+		FPTree fpTree2=new FPTree(singleCandidates);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("1", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("a");
+		itemList.add("d");
+		fpTree2.addToTree("2", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("3", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("d");
+		fpTree2.addToTree("4", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("d");
+		fpTree2.addToTree("5", itemList);
+		
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("6", itemList);
+
+		itemList=new ArrayList<String>();
+		itemList.add("b");
+		itemList.add("c");
+		itemList.add("d");
+		fpTree2.addToTree("7", itemList);
+		
+		List<FPTree> treeList=new ArrayList<FPTree>();
+		treeList.add(fpTree2);
+		treeList.add(fpTree1);
+		
+		fpTree1 =FPTreeUtil.mergeTrees(treeList, singleCandidates);
+		assertEquals("{{[a:5]{[b:5]{[c:5]{[d:5]}}}}{[b:1]{[c:1]{[d:1]}}}{[c:1]{[d:1]}}}", fpTree1.toString());
+		
+		fpTree1.filterTree(5);
+		
+		Map<Set<String>, Integer> frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
+		FPTreeUtil.getFrequentItemSet(singleCandidates, fpTree1, 5, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
+		
+		assertEquals(15, frequentItemSets.size());
+	}
 }

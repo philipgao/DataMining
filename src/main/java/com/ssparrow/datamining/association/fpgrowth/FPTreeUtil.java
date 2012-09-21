@@ -1,6 +1,7 @@
 package com.ssparrow.datamining.association.fpgrowth;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -206,6 +207,60 @@ public class FPTreeUtil {
 			newFPTree.addClonedNodesToTree(nodeList);
 		}
 		return newFPTree;
+	}
+	
+	/**
+	 * @param sourceTree
+	 * @param targetTree
+	 */
+	public static FPTree mergeTrees(List<FPTree> treeList, final List<String> frequentSingleItems){
+		Comparator<FPNode> nodeComparator=new Comparator<FPNode>() {
+			@Override
+			public int compare(FPNode o1, FPNode o2) {
+				return frequentSingleItems.indexOf(o1.getItem())-frequentSingleItems.indexOf(o2.getItem());
+			}
+		};
+		
+		FPTree newTree=new FPTree(frequentSingleItems);
+		
+		for(FPTree fpTree:treeList){
+			FPNode root=fpTree.getRoot();
+			List<FPNode> children = root.getChildren();
+			
+			for(FPNode child:children){
+				Set<String> transactionSet=new HashSet<String>(child.getTransactionSet());
+				for(String tid:transactionSet){
+					try {
+						Map<String, FPNode> transactionPath = child.cloneTransactionWithChildren(tid);
+						child.removeTransactionInSubpath(tid);
+						
+						for(FPTree otherFpTree:treeList){
+							if(!fpTree.equals(otherFpTree)){
+								FPNode otherRoot=otherFpTree.getRoot();
+								FPNode otherChild = otherRoot.getChildByTransaction(tid);
+								
+								if(otherChild!=null){
+									Map<String, FPNode> otherPath = otherChild.cloneTransactionWithChildren(tid);
+									otherChild.removeTransactionInSubpath(tid);
+									
+									transactionPath.putAll(otherPath);
+								}
+							}
+						}
+						
+						List<FPNode> transactionNodes = new  ArrayList<FPNode>(transactionPath.values());
+						Collections.sort(transactionNodes, nodeComparator);
+						
+						newTree.addClonedNodesToTree(transactionNodes);
+						
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		return newTree;
 	}
 	
 	/**
