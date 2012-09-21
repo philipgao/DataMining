@@ -1,0 +1,7 @@
+1 a c d
+2 a d
+3 b c d
+4 b d
+5 d
+6 b c d
+7 b c d
