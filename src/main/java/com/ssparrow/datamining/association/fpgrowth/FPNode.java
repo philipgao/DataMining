@@ -4,13 +4,13 @@
 package com.ssparrow.datamining.association.fpgrowth;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 /**
  * @author Gao, Fei
@@ -25,7 +25,7 @@ public class FPNode {
 	private Map<String, FPNode> childrenMap=new LinkedHashMap<String, FPNode>();
 	private List<FPNode> path =  new ArrayList<FPNode>();
 	
-	private Set<String> transactionSet=new HashSet<String>();
+	private Set<String> transactionSet=new TreeSet<String>();
 	private Map<String, FPNode> transactionChildrenMap=new LinkedHashMap<String, FPNode>();
 	
 	/**
@@ -33,7 +33,6 @@ public class FPNode {
 	 */
 	public FPNode(FPTree fpTree, String item) {
 		this.fpTree=fpTree;
-		this.parent=parent;
 		this.item = item;
 	}
 	
@@ -333,7 +332,7 @@ public class FPNode {
 		FPNode clone = (FPNode) this.clone();
 		path.put(clone.getItem(), clone);
 		
-		HashSet<String> singleTransactionSet = new HashSet<String>();
+		Set<String> singleTransactionSet = new TreeSet<String>();
 		singleTransactionSet.add(tid);
 		clone.setTransactionSet(singleTransactionSet);
 		
@@ -341,7 +340,7 @@ public class FPNode {
 		while(childByTransaction!=null){
 			FPNode childClone = (FPNode)childByTransaction.clone();
 			
-			HashSet<String> childTransactionSet = new HashSet<String>();
+			Set<String> childTransactionSet = new TreeSet<String>();
 			childTransactionSet.add(tid);
 			childClone.setTransactionSet(childTransactionSet);
 			
@@ -446,7 +445,7 @@ public class FPNode {
 	public String toString() {
 	    StringBuffer sb=new StringBuffer();
 	    sb.append("{");
-	    sb.append("[").append(item).append(":").append(transactionSet.size()).append("]");
+	    sb.append("[").append(item).append(":").append(transactionSet).append("]");
 	    for(FPNode child:children){
 		sb.append(child.toString());
 	    }

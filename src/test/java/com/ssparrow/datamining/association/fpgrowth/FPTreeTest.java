@@ -15,12 +15,8 @@ public class FPTreeTest {
 	@Test
 	public void testMergeTreeWithoutSameTransaction() {
 		List<String> singleCandidates =  new ArrayList<String>();
-		singleCandidates.add("a");
-		singleCandidates.add("b");
-		singleCandidates.add("c");
-		singleCandidates.add("d");
 		
-		FPTree fpTree1=new FPTree(singleCandidates);
+		FPTree fpTree1=new FPTree(singleCandidates, false);
 		
 		List<String> itemList=new ArrayList<String>();
 		itemList.add("a");
@@ -102,8 +98,10 @@ public class FPTreeTest {
 		treeList.add(fpTree2);
 		
 		fpTree1 =FPTreeUtil.mergeTrees(treeList, singleCandidates);
-		assertEquals("{{[a:7]{[b:4]{[d:2]}{[c:2]{[d:1]}}}{[c:2]{[d:1]}}{[d:1]}}{[c:1]{[d:1]}}{[b:4]{[c:3]{[d:3]}}{[d:1]}}{[d:1]}}", fpTree1.toString());
-		
+		assertEquals(
+				"{{[a:[11, 12, 13, 14, 17, 21, 22]]{[b:[11, 12, 13, 17]]{[d:[13, 17]]}{[c:[11, 12]]{[d:[12]]}}}{[c:[14, 21]]{[d:[21]]}}{[d:[22]]}}{[c:[15]]{[d:[15]]}}{[b:[16, 23, 24, 26]]{[c:[16, 23, 26]]{[d:[16, 23, 26]]}}{[d:[24]]}}{[d:[25]]}}",
+				fpTree1.toString());
+
 		fpTree1.filterTree(5);
 		
 		Map<Set<String>, Integer> frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
@@ -115,12 +113,8 @@ public class FPTreeTest {
 	@Test
 	public void testMergeTreeWithSameTransaction1() {
 		List<String> singleCandidates =  new ArrayList<String>();
-		singleCandidates.add("a");
-		singleCandidates.add("b");
-		singleCandidates.add("c");
-		singleCandidates.add("d");
 		
-		FPTree fpTree1=new FPTree(singleCandidates);
+		FPTree fpTree1=new FPTree(singleCandidates, false);
 		
 		List<String> itemList=new ArrayList<String>();
 		itemList.add("a");
@@ -208,7 +202,7 @@ public class FPTreeTest {
 		treeList.add(fpTree2);
 		
 		fpTree1 =FPTreeUtil.mergeTrees(treeList, singleCandidates);
-		assertEquals("{{[a:5]{[b:5]{[c:5]{[d:5]}}}}{[c:1]{[d:1]}}{[b:1]{[c:1]{[d:1]}}}}", fpTree1.toString());
+		assertEquals("{{[a:[1, 2, 3, 4, 7]]{[b:[1, 2, 3, 4, 7]]{[c:[1, 2, 3, 4, 7]]{[d:[1, 2, 3, 4, 7]]}}}}{[c:[5]]{[d:[5]]}}{[b:[6]]{[c:[6]]{[d:[6]]}}}}", fpTree1.toString());
 		
 		fpTree1.filterTree(5);
 		
@@ -221,12 +215,8 @@ public class FPTreeTest {
 	@Test
 	public void testMergeTreeWithSameTransaction2() {
 		List<String> singleCandidates =  new ArrayList<String>();
-		singleCandidates.add("a");
-		singleCandidates.add("b");
-		singleCandidates.add("c");
-		singleCandidates.add("d");
 		
-		FPTree fpTree1=new FPTree(singleCandidates);
+		FPTree fpTree1=new FPTree(singleCandidates, false);
 		
 		List<String> itemList=new ArrayList<String>();
 		itemList.add("a");
@@ -314,7 +304,7 @@ public class FPTreeTest {
 		treeList.add(fpTree1);
 		
 		fpTree1 =FPTreeUtil.mergeTrees(treeList, singleCandidates);
-		assertEquals("{{[a:5]{[b:5]{[c:5]{[d:5]}}}}{[b:1]{[c:1]{[d:1]}}}{[c:1]{[d:1]}}}", fpTree1.toString());
+		assertEquals("{{[a:[1, 2, 3, 4, 7]]{[b:[1, 2, 3, 4, 7]]{[c:[1, 2, 3, 4, 7]]{[d:[1, 2, 3, 4, 7]]}}}}{[b:[6]]{[c:[6]]{[d:[6]]}}}{[c:[5]]{[d:[5]]}}}", fpTree1.toString());
 		
 		fpTree1.filterTree(5);
 		

@@ -99,5 +99,17 @@ public class FPTreeUtilTest {
 		FPTreeUtil.getFrequentItemSet(frequentSingleItems, fpTree, 3, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
 		assertEquals(18, frequentItemSets.size());
 	}
+	
+	//{{[a:[3, 2, 1, 7, 4]]{[b:[3, 2, 1, 7, 4]]{[c:[3, 2, 1, 7, 4]]{[d:[3, 2, 1, 7, 4]]}}}}{[c:[5]]{[d:[5]]}}{[b:[6]]{[c:[6]]{[d:[6]]}}}}
+	@Test
+	public void testBuildTreeFromStr(){
+		String str="{{[a:[1, 2, 3, 4, 7]]{[b:[1, 2, 3, 4, 7]]{[c:[1, 2, 3, 4, 7]]{[d:[1, 2, 3, 4, 7]]}}}}{[c:[5]]{[d:[5]]}}{[b:[6]]{[c:[6]]{[d:[6]]}}}}";
+		FPTree fpTree = FPTreeUtil.buildTreeFromStr(str);
+		assertEquals(str, fpTree.toString());
+		
+		str="{{[a:[11, 12, 13, 14, 17, 21, 22]]{[b:[11, 12, 13, 17]]{[d:[13, 17]]}{[c:[11, 12]]{[d:[12]]}}}{[c:[14, 21]]{[d:[21]]}}{[d:[22]]}}{[c:[15]]{[d:[15]]}}{[b:[16, 23, 24, 26]]{[c:[16, 23, 26]]{[d:[16, 23, 26]]}}{[d:[24]]}}{[d:[25]]}}";
+		fpTree = FPTreeUtil.buildTreeFromStr(str);
+		assertEquals(str, fpTree.toString());
+	}
 
 }

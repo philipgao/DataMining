@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 public class FPTreeUtil {
@@ -175,7 +176,7 @@ public class FPTreeUtil {
 			
 			List<FPNode> nodeList=new ArrayList<FPNode>();
 			
-			Set<String> transactionSet = new HashSet<String>(leaf.getTransactionSet());
+			Set<String> transactionSet = new TreeSet<String>(leaf.getTransactionSet());
 			List<FPNode> path = leaf.getPath();
 			
 			FPNode nodeToDelete=null;
@@ -261,6 +262,86 @@ public class FPTreeUtil {
 		}
 		
 		return newTree;
+	}
+	
+	
+	/**
+	 * @param str
+	 * @return
+	 */
+	public static FPTree buildTreeFromStr(String str){
+		List<String> singleCandidates=new ArrayList<String>();
+		FPTree fpTree=new FPTree(singleCandidates, false);
+		
+		buildSubTreeFromStr(fpTree, fpTree.getRoot(), str);
+		
+		return fpTree;
+	}
+	
+	private static void buildSubTreeFromStr(FPTree fpTree, FPNode parent, String str){
+		if(str.startsWith("{")  && str.endsWith("}")){
+			FPNode node = parent;
+			String content=str.substring(1, str.length()-1);
+			
+			int startClause = 0;
+			if(content.startsWith("[")){
+				int nodeStart=0;
+				int nodeEnd=content.indexOf("]")+1;
+				
+				String nodeStr=content.substring(nodeStart+1, nodeEnd);
+				node=buildFPNode(fpTree, nodeStr);
+				parent.addChild(node);
+			
+				startClause = content.indexOf("{", nodeEnd);
+			}
+				
+			while(startClause>=0 && startClause<=content.length()-1){
+				int endClause = findEndClause(content, startClause);
+				
+				String subTreeStr=content.substring(startClause, endClause+1);
+				buildSubTreeFromStr(fpTree, node, subTreeStr);
+				
+				startClause=content.indexOf("{", endClause);
+			}
+		}
+	}
+	
+	private static int findEndClause(String str, int startClause){
+		int count=1;
+		
+		int index=startClause+1; 
+		
+		while(index<str.length()){
+			int nextStart=str.indexOf("{", index)==-1?str.length():str.indexOf("{", index);
+			int nextEnd=str.indexOf("}", index)==-1?str.length():str.indexOf("}", index);
+			
+			count = nextStart<nextEnd? count+1:count-1;
+			index=Math.min(nextStart, nextEnd)+1;
+			
+			if(count==0){
+				return index-1;
+			}
+		}
+		
+		return str.length();
+	}
+	
+	private static FPNode buildFPNode(FPTree fpTree, String str){
+		int seperator = str.indexOf(":");
+		
+		String item=str.substring(0, seperator);
+		
+		String transactionSetStr=str.substring(str.indexOf("[", seperator)+1, str.indexOf("]", seperator));
+		Set<String> transactionSet=new TreeSet<String>();
+		StringTokenizer st=new StringTokenizer(transactionSetStr," ,");
+		while(st.hasMoreTokens()){
+			transactionSet.add(st.nextToken());
+		}
+		
+		FPNode node=new FPNode(fpTree, item);
+		node.setTransactionSet(transactionSet);
+		
+		return node;
 	}
 	
 	/**
