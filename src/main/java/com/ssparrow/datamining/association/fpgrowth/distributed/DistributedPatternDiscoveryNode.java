@@ -3,8 +3,6 @@
  */
 package com.ssparrow.datamining.association.fpgrowth.distributed;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -12,7 +10,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -91,12 +88,14 @@ public class DistributedPatternDiscoveryNode {
 		
 		lock.lock();
 		
+		System.out.println("waiting for master node information and threshold");
 		while(masterAddress==null){
 			condition.await();
 		}
 		
 		lock.unlock();
 		
+		System.out.println("starting pattern discovery on node "+nodeName);
 		List<String> singleCandidates=new ArrayList<String>();
 		
 		FPTree fpTree=new FPTree(singleCandidates,false);
@@ -106,6 +105,10 @@ public class DistributedPatternDiscoveryNode {
 		    
 		    fpTree.addToTree(tid, transaction);
 		}
+		
+		System.out.println("local FP Tree is bult, sending string representation of local tree to master node");
+		message=new Message(masterAddress, null, "FP_TREE:"+fpTree.toString());
+		channel.send(message);
 	}
 	
 	

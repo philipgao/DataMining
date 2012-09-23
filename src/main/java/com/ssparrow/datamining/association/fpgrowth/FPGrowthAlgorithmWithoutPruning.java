@@ -26,6 +26,8 @@ public class FPGrowthAlgorithmWithoutPruning extends
      */
     @Override
     public void findFrequentItemSets(Map<String, List<String>> transactions,  int threshold) {
+    	frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
+    	
 		List<String> singleCandidates=new ArrayList<String>();
 		
 		FPTree fpTree=new FPTree(singleCandidates,false);
@@ -39,6 +41,22 @@ public class FPGrowthAlgorithmWithoutPruning extends
 		fpTree.filterTree(threshold);
 	
 		FPTreeUtil.getFrequentItemSet(singleCandidates, fpTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
+    }
+    
+    /**
+     * @param treeList
+     * @param singleCandidates
+     * @param threshold
+     */
+    public void findFrequentItemSets(List<FPTree> treeList,  List<String> singleCandidates, int threshold) {
+    	frequentItemSets = new LinkedHashMap<Set<String>, Integer>();
+    	
+    	FPTree mergedTree = FPTreeUtil.mergeTrees(treeList, singleCandidates);
+    	System.out.println("merged tree:"+mergedTree.toString());
+		
+		mergedTree.filterTree(threshold);
+		
+		FPTreeUtil.getFrequentItemSet(singleCandidates, mergedTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
     }
 
 }
