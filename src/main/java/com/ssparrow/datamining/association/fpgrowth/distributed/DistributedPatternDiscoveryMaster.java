@@ -46,12 +46,16 @@ public class DistributedPatternDiscoveryMaster extends DistributedPatternDiscove
 	 * @see com.ssparrow.datamining.association.fpgrowth.distributed.DistributedPatternDiscoveryNode#run()
 	 */
 	public void run() throws Exception{
+		System.out.println("Master ["+nodeName+"] started");
+
+		System.out.println("Master ["+nodeName+"]: Minimum support number is set to ["+threshold+"]");
+		
 		while(children.size()==0){
-			System.out.println("no worker connected yet wait for another 10 seconds");
+			System.out.println("Master ["+nodeName+"]: no worker connected yet wait for another 10 seconds");
 			Thread.sleep(10*1000);
 		}
 		
-		System.out.println("starting pattern discovery on node "+nodeName);
+		System.out.println("Master ["+nodeName+"] start pattern discovery on file ["+fileName+"]");
 		List<String> singleCandidates=new ArrayList<String>();
 		
 		FPTree fpTree=new FPTree(singleCandidates,false);
@@ -61,9 +65,9 @@ public class DistributedPatternDiscoveryMaster extends DistributedPatternDiscove
 		    
 		    fpTree.addToTree(tid, transaction);
 		}
-		System.out.println("master local tree:"+fpTree.toString());
+		System.out.println("Master ["+nodeName+"] local tree:"+fpTree.toString());
 		
-		System.out.println("waiting for worker nodes to send their local trees");
+		System.out.println("Master ["+nodeName+"] waiting for worker nodes to send their local trees");
 		lock.lock();
 		while(children.keySet().size()!=localTreeMap.keySet().size()){
 			condition.await();
@@ -76,11 +80,12 @@ public class DistributedPatternDiscoveryMaster extends DistributedPatternDiscove
 			treeList.add(localTreeMap.get(address));
 		}
 		
+		System.out.println("Master ["+nodeName+"] start to merge all locally built FP Tree and do FP-Growth");
 		FPGrowthAlgorithmWithoutPruning fpGrowthAlgorithmWithoutPruning=new FPGrowthAlgorithmWithoutPruning();
 		fpGrowthAlgorithmWithoutPruning.findFrequentItemSets(treeList, singleCandidates, threshold);
 		Map<Set<String>, Integer> frequentItemSets = fpGrowthAlgorithmWithoutPruning.getFrequentItemSets(2);
 		
-		System.out.println("found frequrent item set with size equal or larger than 2 as followed:\n"+frequentItemSets);
+		System.out.println("Master ["+nodeName+"] found frequrent item set with size equal or larger than 2 as followed:\n"+frequentItemSets);
 	}
 	
 	public static void main(String []args) throws Exception{
@@ -97,7 +102,7 @@ public class DistributedPatternDiscoveryMaster extends DistributedPatternDiscove
 		public void receive(Message msg) {
 			String content  = msg.getObject().toString();
 			
-			System.out.println("recevice message - "+content);
+			System.out.println("Master ["+nodeName+"] recevice message - "+content);
 			
 			Address srfcAddress = msg.getSrc();
 			
