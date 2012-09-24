@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
-import java.util.TreeSet;
 
 /**
  * @author Gao, Fei
@@ -19,13 +16,11 @@ public class FPNode {
 	private FPTree fpTree;
 	private FPNode parent;
 	private String item;
+	private int count = 0;
 	
 	private List<FPNode> children = new ArrayList<FPNode>();
 	private Map<String, FPNode> childrenMap=new LinkedHashMap<String, FPNode>();
 	private List<FPNode> path =  new ArrayList<FPNode>();
-	
-	private Set<String> transactionSet=new TreeSet<String>();
-	private Map<String, FPNode> transactionChildrenMap=new LinkedHashMap<String, FPNode>();
 	
 	/**
 	 * @param item
@@ -57,73 +52,25 @@ public class FPNode {
 	}
 
 	/**
+	 * @param count the count to set
+	 */
+	public void setCount(int count) {
+		this.count = count;
+	}
+	
+	/**
+	 * @param amount
+	 */
+	public void increaseCount(int amount){
+		this.count = this.count+amount;
+	}
+
+	
+	/**
 	 * @return
 	 */
 	public int getCount() {
-		return transactionSet.size();
-	}
-	
-	
-	/**
-	 * @return the transactionSet
-	 */
-	public Set<String> getTransactionSet() {
-		return transactionSet;
-	}
-
-	/**
-	 * @param transactionSet
-	 */
-	public void setTransactionSet(Set<String> transactionSet){
-		this.transactionSet=transactionSet;
-	}
-	
-	/**
-	 * @param tid
-	 */
-	public void addTransaction(String tid){
-		transactionSet.add(tid);
-		
-		parent.addChildTransaction(tid, this);
-	}
-	
-	/**
-	 * @param newTransactions
-	 */
-	public void addTransaction(Set<String> transactionSet){
-		this.transactionSet.addAll(transactionSet);
-		
-		for(String tid:transactionSet){
-			parent.addChildTransaction(tid, this);
-		}
-	}
-	
-	/**
-	 * @param tid
-	 */
-	public void removeTransaction(String tid){
-		transactionSet.remove(tid);
-		
-		parent.removeChildTransaction(tid);
-	}
-	
-	/**
-	 * @param newTransactions
-	 */
-	public void removeTransaction(Set<String> transactionSet){
-		this.transactionSet.removeAll(transactionSet);
-		
-		for(String tid:transactionSet){
-			parent.removeChildTransaction(tid);
-		}
-	}
-	
-	/**
-	 * @param tid
-	 * @return
-	 */
-	public boolean hasTransaction(String tid){
-		return transactionSet.contains(tid);
+		return count;
 	}
 
 	/**
@@ -141,10 +88,6 @@ public class FPNode {
 		
 		children.add(child);
 		childrenMap.put(child.getItem(), child);
-		
-		for(String tid: child.getTransactionSet()){
-			transactionChildrenMap.put(tid, child);
-		}
 		
 		child.setFpTree(this.getFpTree());
 		
@@ -180,25 +123,6 @@ public class FPNode {
 	public void removeChild(FPNode child){
 		children.remove(child);
 		childrenMap.remove(child.getItem());
-
-		for(String tid: child.getTransactionSet()){
-			transactionChildrenMap.remove(tid);
-		}
-	}
-	
-	/**
-	 * @param tid
-	 * @param child
-	 */
-	public void addChildTransaction(String tid, FPNode child){
-		transactionChildrenMap.put(tid, child);
-	}
-	
-	/**
-	 * @param tid
-	 */
-	public void removeChildTransaction(String tid){
-		transactionChildrenMap.remove(tid);
 	}
 	
 	/**
@@ -209,9 +133,9 @@ public class FPNode {
 	public void addAndMergeChildren(List<FPNode> addedChildren){
 		for(FPNode newChild:addedChildren){
 			String childItem = newChild.getItem();
-			FPNode existingChild = this.getChildByItem(childItem);
+			FPNode existingChild = this.getChild(childItem);
 			if(existingChild!=null){
-				existingChild.addTransaction(newChild.getTransactionSet());
+				existingChild.increaseCount(newChild.getCount());
 				
 				for(FPNode nextLevelNode:newChild.getChildren()){
 					nextLevelNode.replaceInPath(newChild, existingChild);
@@ -224,10 +148,6 @@ public class FPNode {
 			}else{
 			    children.add(newChild);
 			    childrenMap.put(newChild.getItem(), newChild);
-
-				for(String tid: newChild.getTransactionSet()){
-					transactionChildrenMap.put(tid, newChild);
-				}
 			}
 		}
 	}
@@ -236,16 +156,8 @@ public class FPNode {
 	 * @param item
 	 * @return
 	 */
-	public FPNode getChildByItem(String item){
+	public FPNode getChild(String item){
 		return childrenMap.get(item);
-	}
-	
-	/**
-	 * @param tid
-	 * @return
-	 */
-	public FPNode getChildByTransaction(String tid){
-		return transactionChildrenMap.get(tid);
 	}
 
 	/**
@@ -299,7 +211,7 @@ public class FPNode {
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		FPNode clone=new FPNode(this.fpTree, this.getItem());
-		clone.setTransactionSet(transactionSet);
+		clone.setCount(this.getCount());
 		return clone;
 	}
 
@@ -321,97 +233,19 @@ public class FPNode {
 	}
 	
 	/**
-	 * @param tid
-	 * @return
-	 * @throws CloneNotSupportedException
-	 */
-	public Map<String, FPNode> cloneTransactionWithChildren(String tid) throws CloneNotSupportedException{
-		Map<String, FPNode> path=new LinkedHashMap<String, FPNode>();
-		
-		FPNode clone = (FPNode) this.clone();
-		path.put(clone.getItem(), clone);
-		
-		Set<String> singleTransactionSet = new TreeSet<String>();
-		singleTransactionSet.add(tid);
-		clone.setTransactionSet(singleTransactionSet);
-		
-		FPNode childByTransaction = this.getChildByTransaction(tid);
-		while(childByTransaction!=null){
-			FPNode childClone = (FPNode)childByTransaction.clone();
-			
-			Set<String> childTransactionSet = new TreeSet<String>();
-			childTransactionSet.add(tid);
-			childClone.setTransactionSet(childTransactionSet);
-			
-			clone.addChild(childClone);
-			
-			clone=childClone;
-			
-			path.put(clone.getItem(), clone);
-			
-			childByTransaction=childByTransaction.getChildByTransaction(tid);
-		}
-		
-		return path;
-	}
-	
-	/**
-	 * @param tid
-	 * @param item
-	 * @return
-	 */
-	public FPNode getDescendant(String tid, String item){
-		FPNode childByTransaction = this.getChildByTransaction(tid);
-		
-		while(childByTransaction !=null && !childByTransaction.getItem().equals(item)){
-			childByTransaction=childByTransaction.getChildByTransaction(tid);
-		}
-		
-		return childByTransaction;
-		
-	}
-	
-	public void removeTransactionInSubpath(String tid){
-		Stack<FPNode> descendants=new Stack<FPNode>();
-		descendants.push(this);
-		
-		FPNode childByTransaction = this.getChildByTransaction(tid);
-		while(childByTransaction!=null){
-			descendants.push(childByTransaction);
-			
-			childByTransaction=childByTransaction.getChildByTransaction(tid);
-		}
-		
-		FPNode nodeToDelete=null;
-		while(!descendants.isEmpty()){
-			FPNode node = descendants.pop();
-			node.removeTransaction(tid);
-			
-			if(nodeToDelete!=null){
-				node.removeChild(nodeToDelete);
-			}
-			
-			if(node.getCount()==0){
-				nodeToDelete=node;
-			}
-			
-		}
-		
-	}
-	
-	/**
 	 * merge this node with target node, along with the sub-tree below each node
 	 * 
 	 * @param targetNode
 	 */
 	public void mergeSubTree(FPNode targetNode){
 		if(this.getItem().equals(targetNode.getItem())){
-			this.addTransaction(targetNode.getTransactionSet());
+			int currentCount = this.getCount();
+			this.setCount(currentCount+targetNode.getCount());
 			
 			List<FPNode> targetChildren = targetNode.getChildren();
 
 			for(FPNode targetChild:targetChildren){
-				FPNode child = this.getChildByItem(targetChild.getItem());
+				FPNode child = this.getChild(targetChild.getItem());
 				if(child!=null){
 					child.mergeSubTree(targetChild);
 				}else{
@@ -444,7 +278,7 @@ public class FPNode {
 	public String toString() {
 	    StringBuffer sb=new StringBuffer();
 	    sb.append("{");
-	    sb.append("[").append(item).append(":").append(transactionSet).append("]");
+	    sb.append("[").append(item).append(":").append(count).append("]");
 	    for(FPNode child:children){
 		sb.append(child.toString());
 	    }

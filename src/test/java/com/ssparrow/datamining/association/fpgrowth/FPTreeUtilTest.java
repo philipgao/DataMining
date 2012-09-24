@@ -37,7 +37,7 @@ public class FPTreeUtilTest {
 		itemList.add("m");
 		itemList.add("p");
 		Collections.sort(itemList);
-		fpTree.addToTree("1", itemList);
+		fpTree.addToTree(itemList);
 		
 		//a, b, c, f, l, m, o
 		itemList=new ArrayList<String>();
@@ -49,7 +49,7 @@ public class FPTreeUtilTest {
 		itemList.add("m");
 		itemList.add("o");
 		Collections.sort(itemList);
-		fpTree.addToTree("2", itemList);
+		fpTree.addToTree(itemList);
 		
 		//b, f, h, j, o
 		itemList=new ArrayList<String>();
@@ -59,7 +59,7 @@ public class FPTreeUtilTest {
 		itemList.add("j");
 		itemList.add("o");
 		Collections.sort(itemList);
-		fpTree.addToTree("3", itemList);
+		fpTree.addToTree(itemList);
 
 		//b, c, k, s, p
 		itemList=new ArrayList<String>();
@@ -69,7 +69,7 @@ public class FPTreeUtilTest {
 		itemList.add("s");
 		itemList.add("p");
 		Collections.sort(itemList);
-		fpTree.addToTree("4", itemList);
+		fpTree.addToTree(itemList);
 
 		//a, f, c, e, l, p, m, n
 		itemList=new ArrayList<String>();
@@ -82,7 +82,7 @@ public class FPTreeUtilTest {
 		itemList.add("m");
 		itemList.add("n");
 		Collections.sort(itemList);
-		fpTree.addToTree("5", itemList);
+		fpTree.addToTree(itemList);
 		
 		//c, f, a, b, m, p
 		List<String> frequentSingleItems=new ArrayList<String>();
@@ -99,17 +99,13 @@ public class FPTreeUtilTest {
 		FPTreeUtil.getFrequentItemSet(frequentSingleItems, fpTree, 3, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());
 		assertEquals(18, frequentItemSets.size());
 	}
-	
-	//{{[a:[3, 2, 1, 7, 4]]{[b:[3, 2, 1, 7, 4]]{[c:[3, 2, 1, 7, 4]]{[d:[3, 2, 1, 7, 4]]}}}}{[c:[5]]{[d:[5]]}}{[b:[6]]{[c:[6]]{[d:[6]]}}}}
+
+	//"{{[a:7]{[b:4]{[c:2]{[d:1]}}{[d:2]}}{[c:2]{[d:1]}}{[d:1]}}{[c:1]{[d:1]}}{[b:4]{[c:3]{[d:3]}}{[d:1]}}{[d:1]}}"
 	@Test
 	public void testBuildTreeFromStr(){
-		String str="{{[a:[1, 2, 3, 4, 7]]{[b:[1, 2, 3, 4, 7]]{[c:[1, 2, 3, 4, 7]]{[d:[1, 2, 3, 4, 7]]}}}}{[c:[5]]{[d:[5]]}}{[b:[6]]{[c:[6]]{[d:[6]]}}}}";
+		String str="{{[a:7]{[b:4]{[c:2]{[d:1]}}{[d:2]}}{[c:2]{[d:1]}}{[d:1]}}{[c:1]{[d:1]}}{[b:4]{[c:3]{[d:3]}}{[d:1]}}{[d:1]}}";
 		FPTree fpTree = FPTreeUtil.buildTreeFromStr(str);
 		assertEquals(str, fpTree.toString());
 		
-		str="{{[a:[11, 12, 13, 14, 17, 21, 22]]{[b:[11, 12, 13, 17]]{[d:[13, 17]]}{[c:[11, 12]]{[d:[12]]}}}{[c:[14, 21]]{[d:[21]]}}{[d:[22]]}}{[c:[15]]{[d:[15]]}}{[b:[16, 23, 24, 26]]{[c:[16, 23, 26]]{[d:[16, 23, 26]]}}{[d:[24]]}}{[d:[25]]}}";
-		fpTree = FPTreeUtil.buildTreeFromStr(str);
-		assertEquals(str, fpTree.toString());
 	}
-
 }

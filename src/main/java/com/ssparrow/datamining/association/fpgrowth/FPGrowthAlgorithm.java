@@ -23,13 +23,12 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 	 * @see com.ssparrow.datamining.apriori.AbstractAssociationMiningAlgorithm#findFrequentItemSets(java.util.List, int)
 	 */
 	@Override
-	public void findFrequentItemSets(Map<String, List<String>> transactions,int threshold) {
+	public void findFrequentItemSets(List<List<String>> transactions,int threshold) {
 		List<String> singleCandidates=new ArrayList<String>();
 		
 		//count the occurrence of each single item
 		Map<String, Integer> singleItemCountMap=new TreeMap<String, Integer>();
-		for(String tid:transactions.keySet()){
-			List<String> transaction =transactions.get(tid);
+		for(List<String> transaction:transactions){
 			for(String item:transaction){
 				int count = singleItemCountMap.get(item)==null?1:singleItemCountMap.get(item)+1;
 				singleItemCountMap.put(item, count);
@@ -68,8 +67,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 		//create FP Tree
 		FPTree fpTree=new FPTree(singleCandidates);
 		
-		for(String tid:transactions.keySet()){
-			List<String> transaction =transactions.get(tid);
+		for(List<String> transaction:transactions){
 			//extract frequent single items from transaction
 			Map<Integer, String> frequentItemsMap=new TreeMap<Integer, String>();
 			for(String item:transaction){
@@ -80,7 +78,7 @@ public class FPGrowthAlgorithm extends AbstractAssociationMiningAlgorithm {
 			
 			//create frequent single item list of current transaction, use it to grow FP Tree
 			List<String> itemList = new ArrayList<String>(frequentItemsMap.values());
-			fpTree.addToTree(tid, itemList);
+			fpTree.addToTree(itemList);
 		}
 		
 		FPTreeUtil.getFrequentItemSet(singleCandidates, fpTree, threshold, frequentItemSets, new LinkedHashMap<Set<String>, Integer>());

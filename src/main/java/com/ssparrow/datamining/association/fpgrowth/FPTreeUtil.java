@@ -3,7 +3,6 @@ package com.ssparrow.datamining.association.fpgrowth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -175,7 +174,7 @@ public class FPTreeUtil {
 			
 			List<FPNode> nodeList=new ArrayList<FPNode>();
 			
-			Set<String> transactionSet = new TreeSet<String>(leaf.getTransactionSet());
+			int count=leaf.getCount();
 			List<FPNode> path = leaf.getPath();
 			
 			FPNode nodeToDelete=null;
@@ -183,7 +182,7 @@ public class FPTreeUtil {
 				FPNode node = path.get(index);
 				try {
 					FPNode clone = (FPNode)node.clone();
-					clone.setTransactionSet(transactionSet);
+					clone.setCount(count);
 					nodeList.add(clone);
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
@@ -193,8 +192,8 @@ public class FPTreeUtil {
 					node.removeChild(nodeToDelete);
 				}
 				
-				node.removeTransaction(transactionSet);
-				int newCount=node.getCount();
+				int newCount=node.getCount()-count;
+				node.setCount(newCount);
 				
 				if(newCount==0){
 					nodeToDelete=node;
@@ -208,61 +207,6 @@ public class FPTreeUtil {
 		}
 		return newFPTree;
 	}
-	
-	/**
-	 * @param sourceTree
-	 * @param targetTree
-	 */
-	public static FPTree mergeTrees(List<FPTree> treeList, final List<String> frequentSingleItems){
-		Comparator<FPNode> nodeComparator=new Comparator<FPNode>() {
-			@Override
-			public int compare(FPNode o1, FPNode o2) {
-				return frequentSingleItems.indexOf(o1.getItem())-frequentSingleItems.indexOf(o2.getItem());
-			}
-		};
-		
-		FPTree newTree=new FPTree(frequentSingleItems);
-		
-		for(FPTree fpTree:treeList){
-			FPNode root=fpTree.getRoot();
-			List<FPNode> children = root.getChildren();
-			
-			for(FPNode child:children){
-				Set<String> transactionSet=new HashSet<String>(child.getTransactionSet());
-				for(String tid:transactionSet){
-					try {
-						Map<String, FPNode> transactionPath = child.cloneTransactionWithChildren(tid);
-						child.removeTransactionInSubpath(tid);
-						
-						for(FPTree otherFpTree:treeList){
-							if(!fpTree.equals(otherFpTree)){
-								FPNode otherRoot=otherFpTree.getRoot();
-								FPNode otherChild = otherRoot.getChildByTransaction(tid);
-								
-								if(otherChild!=null){
-									Map<String, FPNode> otherPath = otherChild.cloneTransactionWithChildren(tid);
-									otherChild.removeTransactionInSubpath(tid);
-									
-									transactionPath.putAll(otherPath);
-								}
-							}
-						}
-						
-						List<FPNode> transactionNodes = new  ArrayList<FPNode>(transactionPath.values());
-						Collections.sort(transactionNodes, nodeComparator);
-						
-						newTree.addClonedNodesToTree(transactionNodes);
-						
-					} catch (CloneNotSupportedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		
-		return newTree;
-	}
-	
 	
 	/**
 	 * @param str
@@ -285,7 +229,7 @@ public class FPTreeUtil {
 			int startClause = 0;
 			if(content.startsWith("[")){
 				int nodeStart=0;
-				int nodeEnd=content.indexOf("]")+1;
+				int nodeEnd=content.indexOf("]");
 				
 				String nodeStr=content.substring(nodeStart+1, nodeEnd);
 				node=buildFPNode(fpTree, nodeStr);
@@ -330,15 +274,11 @@ public class FPTreeUtil {
 		
 		String item=str.substring(0, seperator);
 		
-		String transactionSetStr=str.substring(str.indexOf("[", seperator)+1, str.indexOf("]", seperator));
-		Set<String> transactionSet=new TreeSet<String>();
-		StringTokenizer st=new StringTokenizer(transactionSetStr," ,");
-		while(st.hasMoreTokens()){
-			transactionSet.add(st.nextToken());
-		}
+		String countStr=str.substring(seperator+1);
+		int count=Integer.parseInt(countStr);
 		
 		FPNode node=new FPNode(fpTree, item);
-		node.setTransactionSet(transactionSet);
+		node.setCount(count);
 		
 		return node;
 	}
@@ -413,7 +353,7 @@ public class FPTreeUtil {
 		
 		for(String item:singleCandidates){
 			boolean finished=true;
-			Set<String> transactionSet=new HashSet<String>();
+			int count=0;
 			
 			//go through all the paths in each loop, until all the path are finished
 			for(int index=0;index<conditionalPatternBase.size();index++){
@@ -424,7 +364,7 @@ public class FPTreeUtil {
 					finished=false;
 					
 					if(path.get(0).getItem().equals(item)){
-						transactionSet.addAll(path.get(0).getTransactionSet());
+						count+=path.get(0).getCount();
 						
 						//remove the top node anyway, whether it is kept or discarded
 						path.remove(0);
@@ -435,9 +375,9 @@ public class FPTreeUtil {
 			}
 			
 			//if the count match threshold, create node for the merged count and add the node to the tree
-			if(transactionSet.size()>=threshold){
+			if(count>=threshold){
 				FPNode child=new FPNode(fpTree, item);
-				child.setTransactionSet(transactionSet);
+				child.setCount(count);
 				
 				node.addChild(child);
 				node=child;

@@ -103,7 +103,7 @@ public class DistributedPatternDiscoveryNode {
 			List<String> transaction =transactions.get(tid);
 		    Collections.sort(transaction);
 		    
-		    fpTree.addToTree(tid, transaction);
+		    fpTree.addToTree(transaction);
 		}
 		
 		System.out.println("local FP Tree is bult, sending string representation of local tree to master node");

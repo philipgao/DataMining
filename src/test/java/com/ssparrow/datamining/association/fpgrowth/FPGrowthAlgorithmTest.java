@@ -3,7 +3,6 @@ package com.ssparrow.datamining.association.fpgrowth;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +15,7 @@ public class FPGrowthAlgorithmTest {
 
 	@Test
 	public void testFindFrequentItemSets() {
-		Map<String, List<String>> transactions = new LinkedHashMap<String, List<String>>();
+List<List<String>> transactions = new ArrayList<List<String>>();
 		
 		//f, a, c, d, g, i, m, p
 		List<String> transaction=new ArrayList<String>();
@@ -28,7 +27,7 @@ public class FPGrowthAlgorithmTest {
 		transaction.add("i");
 		transaction.add("m");
 		transaction.add("p");
-		transactions.put("1", transaction);
+		transactions.add(transaction);
 		
 		//a, b, c, f, l, m, o
 		transaction=new ArrayList<String>();
@@ -39,7 +38,7 @@ public class FPGrowthAlgorithmTest {
 		transaction.add("l");
 		transaction.add("m");
 		transaction.add("o");
-		transactions.put("2", transaction);
+		transactions.add(transaction);
 		
 		//b, f, h, j, o
 		transaction=new ArrayList<String>();
@@ -48,7 +47,7 @@ public class FPGrowthAlgorithmTest {
 		transaction.add("h");
 		transaction.add("j");
 		transaction.add("o");
-		transactions.put("3", transaction);
+		transactions.add(transaction);
 
 		//b, c, k, s, p
 		transaction=new ArrayList<String>();
@@ -57,7 +56,7 @@ public class FPGrowthAlgorithmTest {
 		transaction.add("k");
 		transaction.add("s");
 		transaction.add("p");
-		transactions.put("4", transaction);
+		transactions.add(transaction);
 
 		//a, f, c, e, l, p, m, n
 		transaction=new ArrayList<String>();
@@ -69,7 +68,7 @@ public class FPGrowthAlgorithmTest {
 		transaction.add("p");
 		transaction.add("m");
 		transaction.add("n");
-		transactions.put("5", transaction);
+		transactions.add(transaction);
 		
 		FPGrowthAlgorithm fpGrowthAlgorithm = new FPGrowthAlgorithm();
 		fpGrowthAlgorithm.findFrequentItemSets(transactions, 3);;

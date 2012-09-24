@@ -59,7 +59,7 @@ public class DistributedPatternDiscoveryMaster extends DistributedPatternDiscove
 			List<String> transaction =transactions.get(tid);
 		    Collections.sort(transaction);
 		    
-		    fpTree.addToTree(tid, transaction);
+		    fpTree.addToTree(transaction);
 		}
 		System.out.println("master local tree:"+fpTree.toString());
 		

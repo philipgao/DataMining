@@ -29,11 +29,10 @@ public class AprioriAlgorithm extends AbstractAssociationMiningAlgorithm{
 	 * @param minSize
 	 * @return
 	 */
-	public void findFrequentItemSets(Map<String, List<String>> transactions, int threshold){
+	public void findFrequentItemSets(List<List<String>> transactions, int threshold){
 		//count the occurrence of all single items
 		Map<Set<String>, Integer> countMap=new LinkedHashMap<Set<String>, Integer>();
-		for(String tid:transactions.keySet()){
-			List<String> transaction = transactions.get(tid);
+		for(List<String> transaction:transactions){
 			for(String item: transaction){
 				Set<String> itemSet=new TreeSet<String>();
 				itemSet.add(item);
@@ -76,8 +75,7 @@ public class AprioriAlgorithm extends AbstractAssociationMiningAlgorithm{
 			//count the support of each item set
 			countMap=new LinkedHashMap<Set<String>, Integer>();
 			for(Set<String> itemSet:nextLevelItemSets){
-				for(String tid:transactions.keySet()){
-					List<String> transaction =transactions.get(tid);
+				for(List<String> transaction:transactions){
 					if(transaction.containsAll(itemSet)){
 						int count=countMap.get(itemSet)==null?1:countMap.get(itemSet)+1;
 						countMap.put(itemSet, count);
