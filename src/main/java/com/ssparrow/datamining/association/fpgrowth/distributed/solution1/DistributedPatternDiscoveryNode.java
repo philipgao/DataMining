@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ssparrow.datamining.association.fpgrowth.distributed;
+package com.ssparrow.datamining.association.fpgrowth.distributed.solution1;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
