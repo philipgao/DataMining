@@ -83,19 +83,21 @@ public class DistributedPatternDiscoverySolution2Worker {
 	}
 	
 	public void run() throws Exception{
+		System.out.println("Jedi ["+nodeName+"] started");
+		
 		Message message=new Message(null, null, "NEW_NODE:"+nodeName);
 		channel.send(message);
 		
 		lock.lock();
-		
-		System.out.println("waiting for master node information and threshold");
+
+		System.out.println("Jedi ["+nodeName+"] is waiting for master node information and threshold");
 		while(masterAddress==null){
 			condition.await();
 		}
 		
 		lock.unlock();
 		
-		System.out.println("starting pattern discovery on node "+nodeName);
+		System.out.println("Jedi ["+nodeName+"] is starting pattern discovery on file ["+fileName+"]");
 		List<String> singleCandidates=new ArrayList<String>();
 		
 		FPTree fpTree=new FPTree(singleCandidates,false);
@@ -106,7 +108,7 @@ public class DistributedPatternDiscoverySolution2Worker {
 		    fpTree.addToTree(transaction);
 		}
 		
-		System.out.println("local FP Tree is bult, sending string representation of local tree to master node");
+		System.out.println("Jedi ["+nodeName+"] finished buildinglocal FP Tree, sending its string representation to master node");
 		message=new Message(masterAddress, null, "FP_TREE:"+fpTree.toString());
 		channel.send(message);
 	}
