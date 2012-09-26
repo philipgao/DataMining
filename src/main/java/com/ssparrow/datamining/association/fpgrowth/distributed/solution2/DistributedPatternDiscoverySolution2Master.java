@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ssparrow.datamining.association.fpgrowth.distributed;
+package com.ssparrow.datamining.association.fpgrowth.distributed.solution2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,12 +23,12 @@ import com.ssparrow.datamining.association.fpgrowth.FPTreeUtil;
  * @author Gao, Fei
  *
  */
-public class DistributedPatternDiscoveryMaster extends DistributedPatternDiscoveryNode{
+public class DistributedPatternDiscoverySolution2Master extends DistributedPatternDiscoverySolution2Worker{
 	private Map<Address, String> children=new HashMap<Address, String>();
 	private Map<Address, FPTree> localTreeMap=new HashMap<Address, FPTree>();
 	private int threshold;
 	
-	public DistributedPatternDiscoveryMaster(String nodeName, String fileName, int threshold) {
+	public DistributedPatternDiscoverySolution2Master(String nodeName, String fileName, int threshold) {
 		super(nodeName, fileName);
 		this.threshold=threshold;
 	}
@@ -84,7 +84,7 @@ public class DistributedPatternDiscoveryMaster extends DistributedPatternDiscove
 	}
 	
 	public static void main(String []args) throws Exception{
-		DistributedPatternDiscoveryMaster node= new DistributedPatternDiscoveryMaster(args[0], args[1], Integer.parseInt(args[2]));
+		DistributedPatternDiscoverySolution2Master node= new DistributedPatternDiscoverySolution2Master(args[0], args[1], Integer.parseInt(args[2]));
 		node.start();
 	}
 
