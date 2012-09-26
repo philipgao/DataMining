@@ -27,7 +27,7 @@ import com.ssparrow.datamining.association.fpgrowth.FPTree;
  * @author Gao, Fei
  *
  */
-public class DistributedPatternDiscoveryNode {
+public class DistributedPatternDiscoverySolution1Worker {
 	protected String nodeName;
 	protected String fileName;
 	protected Address masterAddress;
@@ -43,7 +43,7 @@ public class DistributedPatternDiscoveryNode {
 	 * @param nodeName
 	 * @param fileName
 	 */
-	public DistributedPatternDiscoveryNode(String nodeName, String fileName) {
+	public DistributedPatternDiscoverySolution1Worker(String nodeName, String fileName) {
 		this.nodeName = nodeName;
 		this.fileName = fileName;
 	}
@@ -115,7 +115,7 @@ public class DistributedPatternDiscoveryNode {
 	
 	
 	public static void main(String []args) throws Exception{
-		DistributedPatternDiscoveryNode node= new DistributedPatternDiscoveryNode(args[0], args[1]);
+		DistributedPatternDiscoverySolution1Worker node= new DistributedPatternDiscoverySolution1Worker(args[0], args[1]);
 		node.start();
 		
 	}
