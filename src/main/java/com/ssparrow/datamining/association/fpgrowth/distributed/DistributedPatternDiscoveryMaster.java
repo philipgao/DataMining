@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ssparrow.datamining.association.fpgrowth.distributed.solution1;
+package com.ssparrow.datamining.association.fpgrowth.distributed;
 
 import java.util.ArrayList;
 import java.util.Collections;
